@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="filename" content="танки.html">
     <title>Архив Брони - Энциклопедия танков</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -202,7 +201,6 @@
             transition: var(--transition);
             border: none;
             cursor: pointer;
-            text-decoration: none;
         }
         
         .icon-btn:hover {
@@ -232,63 +230,6 @@
             background: var(--accent-gold-light);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        }
-
-        /* Стили для выпадающего меню пользователя */
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(26, 34, 50, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 8px;
-            padding: 0.5rem 0;
-            min-width: 200px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.75rem 1rem;
-            color: var(--text-light);
-            text-decoration: none;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--accent-gold);
-        }
-
-        .dropdown-divider {
-            height: 1px;
-            background: rgba(212, 175, 55, 0.2);
-            margin: 0.5rem 0;
         }
         
         /* Главный баннер для танков */
@@ -796,19 +737,18 @@
                         <li><a href="index.html">Главная</a></li>
                         <li><a href="tanks.html" class="active">Танки</a></li>
                         <li><a href="planes.html">Самолёты</a></li>
-                        <li><a href="#">Корабли</a></li>
-                        <li><a href="#">Артиллерия</a></li>
+                        <li><a href="ships.html">Корабли</a></li>
+                        <li><a href="artillery.html">Артиллерия</a></li>
                         <li><a href="history.html">Исторические периоды</a></li>
                     </ul>
                 </nav>
-                <div class="nav-actions" id="navActions">
-                    <!-- Здесь будет динамически меняться контент в зависимости от авторизации -->
+                <div class="nav-actions">
                     <button class="icon-btn">
                         <i class="fas fa-bookmark"></i>
                     </button>
-                    <a href="login.html" class="icon-btn">
+                    <button class="icon-btn">
                         <i class="fas fa-user"></i>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1102,116 +1042,74 @@
                 <div class="footer-links">
                     <h4>Коллекции</h4>
                     <ul>
-                        <li><a href="#">Танки и бронетехника</a></li>
-                        <li><a href="#">Самолёты и вертолёты</a></li>
-                        <li><a href="#">Боевые корабли и субмарины</a></li>
-                        <li><a href="#">Артиллерийские системы</a></li>
-                        <li><a href="#">Прототипы и концепты</a></li>
+                        <li><a href="tanks.html">Танки и бронетехника</a></li>
+                        <li><a href="planes.html">Самолёты и вертолёты</a></li>
+                        <li><a href="ships.html">Боевые корабли и субмарины</a></li>
+                        <li><a href="artillery.html">Артиллерийские системы</a></li>
+                        <li><a href="prototypes.html">Прототипы и концепты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="#">Первая мировая война</a></li>
-                        <li><a href="#">Межвоенный период</a></li>
-                        <li><a href="#">Вторая мировая война</a></li>
-                        <li><a href="#">Эпоха холодной войны</a></li>
-                        <li><a href="#">Современные конфликты</a></li>
+                        <li><a href="ww1.html">Первая мировая война</a></li>
+                        <li><a href="interwar.html">Межвоенный период</a></li>
+                        <li><a href="ww2.html">Вторая мировая война</a></li>
+                        <li><a href="coldwar.html">Эпоха холодной войны</a></li>
+                        <li><a href="modern.html">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Ресурсы</h4>
                     <ul>
-                        <li><a href="#">Военные музеи мира</a></li>
-                        <li><a href="#">Технические характеристики</a></li>
-                        <li><a href="#">Исторические документы</a></li>
-                        <li><a href="#">История разработки</a></li>
-                        <li><a href="#">Архив данных</a></li>
+                        <li><a href="museums.html">Военные музеи мира</a></li>
+                        <li><a href="specs.html">Технические характеристики</a></li>
+                        <li><a href="documents.html">Исторические документы</a></li>
+                        <li><a href="development.html">История разработки</a></li>
+                        <li><a href="archive.html">Архив данных</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="copyright">
-                <p>&copy; 2025 Архив Брони. Сайт предназначен для образовательных и исторических целей.</p>
+                <p>&copy; 2023 Архив Брони. Сайт предназначен для образовательных и исторических целей.</p>
                 <p class="brand-info">Сохраняя военную историю через технологии</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Проверяем авторизацию и обновляем навигацию
-        function updateNavigation() {
-            const currentUser = JSON.parse(localStorage.getItem('armor_archive_current_user') || 'null');
-            const navActions = document.getElementById('navActions');
+        // Обработка фильтров
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            alert('Фильтры применены. В реальном приложении здесь будет обновление списка танков.');
+        });
+        
+        document.querySelector('.btn-secondary').addEventListener('click', function() {
+            const selects = document.querySelectorAll('select');
+            const inputs = document.querySelectorAll('input[type="text"]');
             
-            if (!navActions) return;
+            selects.forEach(select => {
+                select.selectedIndex = 0;
+            });
             
-            if (currentUser) {
-                // Пользователь авторизован - показываем меню
-                navActions.innerHTML = `
-                    <button class="icon-btn" id="favoritesBtn">
-                        <i class="fas fa-bookmark"></i>
-                    </button>
-                    <div class="user-dropdown">
-                        <button class="icon-btn" id="userMenuBtn">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a href="profile.html" class="dropdown-item">
-                                <i class="fas fa-user-circle"></i> Мой профиль
-                            </a>
-                            <a href="favorites.html" class="dropdown-item">
-                                <i class="fas fa-bookmark"></i> Избранное
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" id="logoutBtn">
-                                <i class="fas fa-sign-out-alt"></i> Выйти
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                // Добавляем обработчики для выпадающего меню
-                const userMenuBtn = document.getElementById('userMenuBtn');
-                const dropdownMenu = document.querySelector('.dropdown-menu');
-                const logoutBtn = document.getElementById('logoutBtn');
-                
-                if (userMenuBtn) {
-                    userMenuBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        dropdownMenu.classList.toggle('show');
-                    });
-                }
-                
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', () => {
-                        localStorage.removeItem('armor_archive_current_user');
-                        window.location.reload();
-                    });
-                }
-                
-                // Закрываем меню при клике вне его
-                document.addEventListener('click', () => {
-                    if (dropdownMenu) {
-                        dropdownMenu.classList.remove('show');
-                    }
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            
+            alert('Фильтры сброшены.');
+        });
+        
+        // Обработка кнопок "Подробнее"
+        document.querySelectorAll('.tank-btn').forEach(btn => {
+            if (btn.tagName === 'BUTTON') {
+                btn.addEventListener('click', function() {
+                    const tankName = this.closest('.tank-card').querySelector('h3').textContent;
+                    alert(`Подробная информация о ${tankName}. В реальном приложении будет переход на страницу танка.`);
                 });
-                
-            } else {
-                // Пользователь не авторизован - показываем обычные кнопки
-                navActions.innerHTML = `
-                    <button class="icon-btn">
-                        <i class="fas fa-bookmark"></i>
-                    </button>
-                    <a href="login.html" class="icon-btn">
-                        <i class="fas fa-user"></i>
-                    </a>
-                `;
             }
-        }
+        });
     </script>
 </body>
 </html>
-
