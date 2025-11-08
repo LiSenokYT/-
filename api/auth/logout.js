@@ -1,16 +1,34 @@
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(request) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
+    });
   }
 
-  try {
-    // В serverless аутентификации logout обычно клиентский
-    // Но можно добавить blacklist токенов если нужно
-    res.json({
-      message: 'Выход выполнен успешно'
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     });
-  } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
   }
-};
+
+  const response = {
+    message: 'Выход выполнен успешно'
+  };
+
+  return new Response(JSON.stringify(response), {
+    status: 200,
+    headers: { 
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
