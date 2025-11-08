@@ -1211,32 +1211,7 @@
                 `;
             }
         }
-        
-        // Обновляем навигацию при загрузке страницы
-        document.addEventListener('DOMContentLoaded', updateNavigation);
-
-        // Создаем демо-пользователя при первом посещении (если нужно)
-        document.addEventListener('DOMContentLoaded', function() {
-            const users = JSON.parse(localStorage.getItem('armor_archive_users') || '[]');
-            if (users.length === 0) {
-                const demoUser = {
-                    id: 'demo123',
-                    username: 'demo',
-                    email: 'demo@armorarchive.ru',
-                    password: btoa(unescape(encodeURIComponent('demo123'))),
-                    createdAt: new Date().toISOString(),
-                    profile: {
-                        firstName: 'Демо',
-                        lastName: 'Пользователь',
-                        avatar: '',
-                        bio: 'Любитель военной техники',
-                        favorites: []
-                    }
-                };
-                users.push(demoUser);
-                localStorage.setItem('armor_archive_users', JSON.stringify(users));
-            }
-        });
     </script>
 </body>
 </html>
+
