@@ -1,33 +1,42 @@
-module.exports = async (req, res) => {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  try {
-    const { id } = req.query;
-    
-    // Здесь будет получение пользователя из БД
-    const users = await getUsers();
-    const user = users.find(u => u.id === id);
-    
-    if (!user) {
-      return res.status(404).json({ error: 'Пользователь не найден' });
-    }
-
-    // Не возвращаем пароль
-    const { password, ...userWithoutPassword } = user;
-    
-    res.json({
-      user: userWithoutPassword
+export default async function handler(request) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
     });
-
-  } catch (error) {
-    console.error('Get user error:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
   }
-};
 
-// Временная функция (замените на реальную БД)
-async function getUsers() {
-  return [];
+  if (request.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
+
+  const url = new URL(request.url);
+  const id = url.pathname.split('/').pop();
+
+  const response = {
+    user: {
+      id: id,
+      username: 'demo_user',
+      email: 'demo@example.com',
+      profile: { favorites: [] }
+    }
+  };
+
+  return new Response(JSON.stringify(response), {
+    status: 200,
+    headers: { 
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
 }
