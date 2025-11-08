@@ -568,8 +568,8 @@
                         <li><a href="index.html">Главная</a></li>
                         <li><a href="tanks.html">Танки</a></li>
                         <li><a href="planes.html">Самолёты</a></li>
-                        <li><a href="ships.html">Корабли</a></li>
-                        <li><a href="artillery.html">Артиллерия</a></li>
+                        <li><a href="#">Корабли</a></li>
+                        <li><a href="#">Артиллерия</a></li>
                         <li><a href="history.html">Исторические периоды</a></li>
                     </ul>
                 </nav>
@@ -596,8 +596,8 @@
                 
                 <form id="loginForm">
                     <div class="form-group">
-                        <label class="form-label">Электронная почта или имя пользователя</label>
-                        <input type="text" class="form-input" placeholder="Введите email или имя пользователя" required>
+                        <label class="form-label">Электронная почта</label>
+                        <input type="email" class="form-input" placeholder="Введите ваш email" required>
                     </div>
                     
                     <div class="form-group">
@@ -663,31 +663,31 @@
                     <ul>
                         <li><a href="tanks.html">Танки и бронетехника</a></li>
                         <li><a href="planes.html">Самолёты и вертолёты</a></li>
-                        <li><a href="ships.html">Боевые корабли и субмарины</a></li>
-                        <li><a href="artillery.html">Артиллерийские системы</a></li>
-                        <li><a href="prototypes.html">Прототипы и концепты</a></li>
+                        <li><a href="#">Боевые корабли и субмарины</a></li>
+                        <li><a href="#">Артиллерийские системы</a></li>
+                        <li><a href="#">Прототипы и концепты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="ww1.html">Первая мировая война</a></li>
-                        <li><a href="interwar.html">Межвоенный период</a></li>
-                        <li><a href="ww2.html">Вторая мировая война</a></li>
-                        <li><a href="coldwar.html">Эпоха холодной войны</a></li>
-                        <li><a href="modern.html">Современные конфликты</a></li>
+                        <li><a href="history.html">Первая мировая война</a></li>
+                        <li><a href="history.html">Межвоенный период</a></li>
+                        <li><a href="history.html">Вторая мировая война</a></li>
+                        <li><a href="history.html">Эпоха холодной войны</a></li>
+                        <li><a href="history.html">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Ресурсы</h4>
                     <ul>
-                        <li><a href="museums.html">Военные музеи мира</a></li>
-                        <li><a href="specs.html">Технические характеристики</a></li>
-                        <li><a href="documents.html">Исторические документы</a></li>
-                        <li><a href="development.html">История разработки</a></li>
-                        <li><a href="archive.html">Архив данных</a></li>
+                        <li><a href="#">Военные музеи мира</a></li>
+                        <li><a href="#">Технические характеристики</a></li>
+                        <li><a href="#">Исторические документы</a></li>
+                        <li><a href="#">История разработки</a></li>
+                        <li><a href="#">Архив данных</a></li>
                     </ul>
                 </div>
             </div>
@@ -699,6 +699,7 @@
         </div>
     </footer>
 
+    <script src="js/auth.js"></script>
     <script>
         // Переключение видимости пароля
         document.querySelectorAll('.password-toggle').forEach(toggle => {
@@ -719,42 +720,30 @@
         });
 
         // Обработка формы входа
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const emailOrUsername = this.querySelector('input[type="text"]').value;
+            const email = this.querySelector('input[type="email"]').value;
             const password = this.querySelector('input[type="password"]').value;
             
-            // Получаем пользователей из localStorage
-            const users = JSON.parse(localStorage.getItem('armor_archive_users') || '[]');
-            
-            // Ищем пользователя
-            const user = users.find(u => 
-                u.email === emailOrUsername || u.username === emailOrUsername
-            );
-
-            if (!user) {
-                showMessage(this, 'Пользователь не найден', 'error');
+            // Валидация
+            if (!email || !password) {
+                showMessage(this, 'Пожалуйста, заполните все поля', 'error');
                 return;
             }
-
-            // Проверяем пароль
-            const hashedPassword = btoa(unescape(encodeURIComponent(password)));
-            if (user.password !== hashedPassword) {
-                showMessage(this, 'Неверный пароль', 'error');
-                return;
+            
+            try {
+                await window.authSystem.login(email, password);
+                
+                showMessage(this, 'Вход выполнен успешно! Добро пожаловать обратно!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                
+            } catch (error) {
+                showMessage(this, error.message, 'error');
             }
-
-            // Сохраняем текущего пользователя (без пароля)
-            const { password: _, ...userWithoutPassword } = user;
-            localStorage.setItem('armor_archive_current_user', JSON.stringify(userWithoutPassword));
-            
-            showMessage(this, 'Вход выполнен успешно! Добро пожаловать обратно!', 'success');
-            
-            // Перенаправление на главную страницу через 1.5 секунды
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
         });
 
         // Функция показа сообщений
@@ -784,37 +773,8 @@
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const provider = this.querySelector('i').className.includes('google') ? 'Google' : 'GitHub';
-                alert(`Вход через ${provider} будет реализован позже`);
+                showMessage(document.getElementById('loginForm'), `Вход через ${provider} будет реализован позже`, 'info');
             });
-        });
-
-        // Автозаполнение для демонстрации
-        document.addEventListener('DOMContentLoaded', function() {
-            // Создаем демо-пользователя при первом посещении
-            const users = JSON.parse(localStorage.getItem('armor_archive_users') || '[]');
-            if (users.length === 0) {
-                const demoUser = {
-                    id: 'demo123',
-                    username: 'demo',
-                    email: 'demo@armorarchive.ru',
-                    password: btoa(unescape(encodeURIComponent('demo123'))),
-                    createdAt: new Date().toISOString(),
-                    profile: {
-                        firstName: 'Демо',
-                        lastName: 'Пользователь',
-                        avatar: '',
-                        bio: 'Любитель военной техники',
-                        favorites: []
-                    }
-                };
-                users.push(demoUser);
-                localStorage.setItem('armor_archive_users', JSON.stringify(users));
-            }
-            
-            // Автозаполнение полей для удобства тестирования
-            const inputs = document.querySelectorAll('.form-input');
-            if (inputs[0]) inputs[0].value = 'demo@armorarchive.ru';
-            if (inputs[1]) inputs[1].value = 'demo123';
         });
     </script>
 </body>
