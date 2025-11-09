@@ -6,6 +6,7 @@
     <title>Архив Брони - Энциклопедия военной техники</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Сохраняем ваш оригинальный стиль */
         :root {
             --dark-base: #0c0e14;
             --dark-primary: #121726;
@@ -79,6 +80,7 @@
             z-index: 10;
         }
         
+        /* Остальные стили остаются как в оригинале */
         header {
             background: rgba(26, 34, 50, 0.95);
             backdrop-filter: blur(10px);
@@ -284,115 +286,118 @@
         .btn-secondary:hover {
             background: rgba(212, 175, 55, 0.1);
         }
+
+        /* НОВЫЕ СТИЛИ ДЛЯ ОБНОВЛЕННОЙ ГЛАВНОЙ */
         
-        .sorting-tools {
+        /* Техника дня */
+        .featured-tech {
             background: rgba(26, 34, 50, 0.7);
             margin: 3rem auto;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
             max-width: 1200px;
-        }
-        
-        .tools-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .tools-header h3 {
-            color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .search-container {
-            flex: 1;
-            max-width: 400px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
             position: relative;
+            overflow: hidden;
         }
         
-        .search-bar {
-            width: 100%;
-            padding: 12px 15px 12px 45px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 6px;
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-        
-        .search-icon {
+        .featured-tech::before {
+            content: '';
             position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-gold);
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent 70%);
+            border-radius: 50%;
         }
         
-        .sort-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 1rem;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .filter-group label {
-            margin-bottom: 8px;
-            color: var(--accent-gold);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .filter-group select {
-            padding: 10px 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 6px;
-            color: var(--text-light);
-            max-width: 250px;
-        }
-        
-        .stat-summary {
-            display: flex;
-            gap: 20px;
-            margin-top: 15px;
-            justify-content: flex-end;
-        }
-        
-        .stat-item {
+        .featured-header {
             text-align: center;
+            margin-bottom: 2.5rem;
         }
         
-        .stat-value {
+        .featured-header h2 {
             color: var(--accent-gold);
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         
-        .stat-label {
+        .featured-header h2::before {
+            content: '⭐';
+            font-size: 2rem;
+        }
+        
+        .featured-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .featured-image {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .featured-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .featured-info h3 {
+            font-size: 2.2rem;
+            color: var(--accent-gold-light);
+            margin-bottom: 1rem;
+        }
+        
+        .featured-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .spec-item {
+            background: rgba(12, 15, 22, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-gold);
+        }
+        
+        .spec-label {
             color: var(--text-gray);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
         }
         
-        .showcase {
-            margin: 3rem 0 5rem;
-            position: relative;
+        .spec-value {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Исторические эпохи */
+        .timeline-section {
+            padding: 4rem 0;
         }
         
         .section-title {
             text-align: center;
             margin-bottom: 3rem;
-            position: relative;
         }
         
         .section-title h2 {
@@ -408,129 +413,203 @@
             font-size: 1.1rem;
         }
         
-        .equipment-grid {
+        .timeline-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .era-card {
+            background: rgba(26, 34, 50, 0.7);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .era-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        .era-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), transparent);
+        }
+        
+        .era-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .era-title h3 {
+            color: var(--accent-gold-light);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .era-years {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .era-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .tech-tag {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Новые поступления */
+        .new-arrivals {
+            padding: 4rem 0;
+        }
+        
+        .arrivals-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
+            margin-top: 2rem;
         }
         
-        .equipment-card {
+        .arrival-card {
             background: rgba(26, 34, 50, 0.7);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             transition: var(--transition);
             border: 1px solid rgba(212, 175, 55, 0.2);
-            position: relative;
         }
         
-        .equipment-card:hover {
+        .arrival-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
             border-color: rgba(212, 175, 55, 0.4);
         }
         
-        .card-image {
-            height: 200px;
-            overflow: hidden;
-            position: relative;
+        .arrival-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-gold);
+            color: var(--dark-base);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         
-        .card-image img {
+        /* Военные музеи */
+        .museums-section {
+            padding: 4rem 0;
+            background: rgba(18, 23, 38, 0.5);
+            margin-top: 2rem;
+        }
+        
+        .museums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .museum-card {
+            background: rgba(26, 34, 50, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: var(--transition);
+        }
+        
+        .museum-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+        }
+        
+        .museum-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .museum-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
         
-        .equipment-card:hover .card-image img {
+        .museum-card:hover .museum-image img {
             transform: scale(1.05);
         }
         
-        .country-tag {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(12, 14, 20, 0.9);
-            padding: 6px 15px;
-            border-radius: 20px;
-            color: var(--accent-gold);
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .card-content {
+        .museum-content {
             padding: 1.5rem;
         }
         
-        .card-content h3 {
-            margin-bottom: 12px;
-            font-size: 1.5rem;
+        .museum-content h3 {
             color: var(--accent-gold-light);
-            min-height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
         }
         
-        .equipment-year {
-            font-size: 0.9rem;
-            background: rgba(212, 175, 55, 0.1);
-            padding: 4px 10px;
-            border-radius: 15px;
-        }
-        
-        .equipment-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 1rem 0;
-        }
-        
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(212, 175, 55, 0.1);
-            padding: 6px 12px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-        }
-        
-        .card-content p {
-            margin-bottom: 1.5rem;
-            color: var(--text-gray);
-            font-size: 0.95rem;
-            min-height: 4rem;
-        }
-        
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(212, 175, 55, 0.1);
-        }
-        
-        .card-btn {
-            padding: 8px 20px;
-            background: transparent;
+        .museum-location {
             color: var(--accent-gold);
-            border: 1px solid var(--accent-gold);
-            border-radius: 50px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
             font-size: 0.9rem;
         }
         
-        .card-btn:hover {
-            background: rgba(212, 175, 55, 0.1);
+        .museum-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
         }
         
+        .museum-stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            color: var(--accent-gold);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.8rem;
+        }
+        
+        /* Футер (оставляем как было) */
         footer {
             background: rgba(12, 15, 22, 0.95);
             padding: 4rem 0 2rem;
@@ -631,6 +710,11 @@
             .hero h2 {
                 font-size: 2.5rem;
             }
+            
+            .featured-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -645,22 +729,22 @@
                 gap: 0.8rem;
             }
             
-            .search-container {
-                max-width: 100%;
-            }
-            
             .hero {
                 padding: 2rem 0;
             }
             
-            .tools-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-            
             .hero-buttons {
                 flex-direction: column;
+            }
+            
+            .timeline-cards,
+            .arrivals-grid,
+            .museums-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-specs {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -673,8 +757,8 @@
                 font-size: 1.8rem;
             }
             
-            .equipment-grid {
-                grid-template-columns: 1fr;
+            .featured-tech {
+                padding: 2rem 1.5rem;
             }
         }
     </style>
@@ -719,126 +803,131 @@
                 <h2>Хроника Военной Техники</h2>
                 <p>Откройте столетие развития военной индустрии - от окопов Первой мировой до современных полей боя. Изучайте технические характеристики, историю создания и технологические инновации.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary">Экспонаты</button>
-                    <button class="btn btn-secondary">Исторические периоды</button>
+                    <button class="btn btn-primary">Исследовать коллекцию</button>
+                    <button class="btn btn-secondary">Узнать историю</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="sorting-tools">
-        <div class="tools-header">
-            <h3><i class="fas fa-sort"></i> Фильтрация и сортировка техники</h3>
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-bar" placeholder="Поиск по названию, стране, эпохе...">
+    <!-- Техника дня -->
+    <section class="featured-tech">
+        <div class="container">
+            <div class="featured-header">
+                <h2>Техника дня</h2>
+                <p>Выдающийся экспонат, заслуживающий особого внимания</p>
             </div>
-        </div>
-        
-        <div class="sort-filters">
-            <div class="filter-group">
-                <label>Категория техники</label>
-                <select>
-                    <option>Все категории</option>
-                    <option selected>Танки и бронетехника</option>
-                    <option>Военные самолёты</option>
-                    <option>Военные корабли</option>
-                    <option>Артиллерийские системы</option>
-                    <option>Стрелковое оружие</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label>Страна производитель</label>
-                <select>
-                    <option>Все страны</option>
-                    <option selected>СССР</option>
-                    <option>США</option>
-                    <option>Германия</option>
-                    <option>Великобритания</option>
-                    <option>Франция</option>
-                    <option>Япония</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label>Историческая эпоха</label>
-                <select>
-                    <option>Все эпохи</option>
-                    <option>Первая мировая (1914-1918)</option>
-                    <option selected>Вторая мировая (1939-1945)</option>
-                    <option>Холодная война (1947-1991)</option>
-                    <option>Современность (1991-Настоящее)</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label>Сортировка</label>
-                <select>
-                    <option>Сначала новые</option>
-                    <option>Сначала старые</option>
-                    <option selected>Название (А-Я)</option>
-                    <option>Страна</option>
-                    <option>Эффективность</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="stat-summary">
-            <div class="stat-item">
-                <div class="stat-value">2,458</div>
-                <div class="stat-label">Моделей техники</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">389</div>
-                <div class="stat-label">Танков</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">876</div>
-                <div class="stat-label">Самолётов</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">119</div>
-                <div class="stat-label">Стран</div>
+            <div class="featured-content">
+                <div class="featured-image">
+                    <img src="https://images.unsplash.com/photo-1587886401819-ded8789b208a?q=80&w=1470" alt="Танк Т-14 Армата">
+                </div>
+                <div class="featured-info">
+                    <h3>Т-14 «Армата»</h3>
+                    <p>Российский основной боевой танк третьего поколения на универсальной гусеничной платформе «Армата». Первый в мире серийный танк с необитаемой башней.</p>
+                    
+                    <div class="featured-specs">
+                        <div class="spec-item">
+                            <div class="spec-label">Год принятия на вооружение</div>
+                            <div class="spec-value">2022</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">Масса</div>
+                            <div class="spec-value">55 т</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">Экипаж</div>
+                            <div class="spec-value">3 человека</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-label">Вооружение</div>
+                            <div class="spec-value">125-мм пушка 2А82</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i> Узнать подробнее
+                    </button>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="showcase">
+    <!-- Исторические эпохи -->
+    <section class="timeline-section">
         <div class="container">
             <div class="section-title">
-                <h2>Экспонаты военной техники</h2>
-                <p>Изучайте характеристики и историю знаковых образцов вооружения</p>
+                <h2>Исторические эпохи</h2>
+                <p>Исследуйте эволюцию военной техники через ключевые периоды истории</p>
             </div>
             
-            <div class="equipment-grid">
-                <div class="equipment-card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1587886401819-ded8789b208a?q=80&w=1470" alt="Танк Абрамс">
-                        <div class="country-tag">
-                            <i class="fas fa-flag"></i> США
+            <div class="timeline-cards">
+                <div class="era-card">
+                    <div class="era-header">
+                        <div class="era-title">
+                            <h3>Первая мировая</h3>
+                            <p>Рождение современной техники</p>
                         </div>
+                        <div class="era-years">1914-1918</div>
                     </div>
-                    <div class="card-content">
-                        <h3>М1 Абрамс <span class="equipment-year">1980-Настоящее</span></h3>
-                        <div class="equipment-meta">
-                            <span class="meta-item"><i class="fas fa-tank"></i> Основной боевой танк</span>
-                            <span class="meta-item"><i class="fas fa-ruler-combined"></i> 9.8 м / 62 т</span>
-                        </div>
-                        <p>M1 Abrams - американский основной боевой танк третьего поколения с передовой защитой и системой управления огнём. Постоянно модернизируется с момента ввода в эксплуатацию.</p>
-                        <div class="card-footer">
-                            <span><i class="fas fa-missile"></i> 120 мм орудие</span>
-                            <button class="card-btn">Подробнее</button>
-                        </div>
+                    <p>Появление первых танков, военной авиации и массовой механизации армий.</p>
+                    <div class="era-tech">
+                        <span class="tech-tag">Mark I</span>
+                        <span class="tech-tag">Renault FT</span>
+                        <span class="tech-tag">Fokker Dr.I</span>
                     </div>
                 </div>
                 
+                <div class="era-card">
+                    <div class="era-header">
+                        <div class="era-title">
+                            <h3>Вторая мировая</h3>
+                            <p>Массовое производство</p>
+                        </div>
+                        <div class="era-years">1939-1945</div>
+                    </div>
+                    <p>Стратегические бомбардировщики, танковые сражения и реактивная авиация.</p>
+                    <div class="era-tech">
+                        <span class="tech-tag">Т-34</span>
+                        <span class="tech-tag">Tiger I</span>
+                        <span class="tech-tag">Me 262</span>
+                    </div>
+                </div>
+                
+                <div class="era-card">
+                    <div class="era-header">
+                        <div class="era-title">
+                            <h3>Холодная война</h3>
+                            <p>Гонка вооружений</p>
+                        </div>
+                        <div class="era-years">1947-1991</div>
+                    </div>
+                    <p>Ядерное оружие, сверхзвуковые самолеты и ракетные технологии.</p>
+                    <div class="era-tech">
+                        <span class="tech-tag">Т-72</span>
+                        <span class="tech-tag">МиГ-25</span>
+                        <span class="tech-tag">F-15</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новые поступления -->
+    <section class="new-arrivals">
+        <div class="container">
+            <div class="section-title">
+                <h2>Новые поступления</h2>
+                <p>Свежие добавления в нашу коллекцию военной техники</p>
+            </div>
+            
+            <div class="arrivals-grid">
                 <div class="equipment-card">
                     <div class="card-image">
                         <img src="https://images.unsplash.com/photo-1600054800747-fe98fce4149e?q=80&w=1472" alt="Истребитель F-35">
                         <div class="country-tag">
                             <i class="fas fa-flag"></i> США
                         </div>
+                        <div class="arrival-badge">NEW</div>
                     </div>
                     <div class="card-content">
                         <h3>F-35 Лайтнинг II <span class="equipment-year">2015-Настоящее</span></h3>
@@ -846,7 +935,7 @@
                             <span class="meta-item"><i class="fas fa-fighter-jet"></i> Стелс-истребитель</span>
                             <span class="meta-item"><i class="fas fa-tachometer-alt"></i> 1,6 Маха</span>
                         </div>
-                        <p>Истребитель пятого поколения со стелс-технологиями, продвинутыми сенсорами и системами сетевой войны. Используется различными воздушными силами союзников.</p>
+                        <p>Истребитель пятого поколения со стелс-технологиями, продвинутыми сенсорами и системами сетевой войны.</p>
                         <div class="card-footer">
                             <span><i class="fas fa-compass"></i> Дальность 1300 км</span>
                             <button class="card-btn">Подробнее</button>
@@ -856,20 +945,21 @@
                 
                 <div class="equipment-card">
                     <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1546345501-c12f135fb1b0?q=80&w=1470" alt="Танк Т-34">
+                        <img src="https://images.unsplash.com/photo-1632670944517-5a0b0a0b0b0b?q=80&w=1470" alt="Танк Т-14 Армата">
                         <div class="country-tag">
-                            <i class="fas fa-flag"></i> СССР
+                            <i class="fas fa-flag"></i> Россия
                         </div>
+                        <div class="arrival-badge">NEW</div>
                     </div>
                     <div class="card-content">
-                        <h3>Т-34 <span class="equipment-year">1940-1958</span></h3>
+                        <h3>Т-14 Армата <span class="equipment-year">2015-Настоящее</span></h3>
                         <div class="equipment-meta">
-                            <span class="meta-item"><i class="fas fa-tank"></i> Средний танк</span>
-                            <span class="meta-item"><i class="fas fa-ruler-combined"></i> 6.7 м / 26,5 т</span>
+                            <span class="meta-item"><i class="fas fa-tank"></i> Основной боевой танк</span>
+                            <span class="meta-item"><i class="fas fa-weight-hanging"></i> 48 т</span>
                         </div>
-                        <p>Советский средний танк, революционизировавший конструкцию бронетехники благодаря наклонной броне. Сыграл критическую роль на Восточном фронте во Второй мировой войне.</p>
+                        <p>Новейший российский основной боевой танк на платформе "Армата" с необитаемой башней.</p>
                         <div class="card-footer">
-                            <span><i class="fas fa-gun"></i> 76,2 мм орудие</span>
+                            <span><i class="fas fa-gun"></i> 125-мм пушка</span>
                             <button class="card-btn">Подробнее</button>
                         </div>
                     </div>
@@ -877,63 +967,79 @@
                 
                 <div class="equipment-card">
                     <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1674343152902-cf4e89e1e79f?q=80&w=1470" alt="Вертолет Апач">
+                        <img src="https://images.unsplash.com/photo-1614553954867-1d5d7c9b8d6a?q=80&w=1470" alt="Вертолет Ми-28">
                         <div class="country-tag">
-                            <i class="fas fa-flag"></i> США
+                            <i class="fas fa-flag"></i> Россия
                         </div>
                     </div>
                     <div class="card-content">
-                        <h3>AH-64 Апач <span class="equipment-year">1986-Настоящее</span></h3>
+                        <h3>Ми-28Н «Ночной охотник» <span class="equipment-year">2006-Настоящее</span></h3>
                         <div class="equipment-meta">
-                            <span class="meta-item"><i class="fas fa-helicopter"></i> Боевой вертолёт</span>
-                            <span class="meta-item"><i class="fas fa-ruler-combined"></i> 17,7 м / 5,2 т</span>
+                            <span class="meta-item"><i class="fas fa-helicopter"></i> Ударный вертолёт</span>
+                            <span class="meta-item"><i class="fas fa-gauge-high"></i> 300 км/ч</span>
                         </div>
-                        <p>Двухдвигательный боевой вертолёт со значительной огневой мощью. Оборудован передовыми системами управления и способен действовать днём, ночью и в сложных метеоусловиях.</p>
+                        <p>Российский ударный вертолёт, предназначенный для поиска и уничтожения танков и другой техники.</p>
                         <div class="card-footer">
-                            <span><i class="fas fa-missile"></i> Ракеты Хелфаер</span>
+                            <span><i class="fas fa-missile"></i> ПТУР «Атака»</span>
                             <button class="card-btn">Подробнее</button>
                         </div>
                     </div>
                 </div>
-                
-                <div class="equipment-card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1572077712598-3a7b89724c85?q=80&w=1470" alt="Линкор">
-                        <div class="country-tag">
-                            <i class="fas fa-flag"></i> США
-                        </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Военные музеи -->
+    <section class="museums-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Военные музеи мира</h2>
+                <p>Лучшие места для изучения военной истории и техники</p>
+            </div>
+            
+            <div class="museums-grid">
+                <div class="museum-card">
+                    <div class="museum-image">
+                        <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1470" alt="Музей танков">
                     </div>
-                    <div class="card-content">
-                        <h3>Линкор класса Айова <span class="equipment-year">1943-2012</span></h3>
-                        <div class="equipment-meta">
-                            <span class="meta-item"><i class="fas fa-ship"></i> Линкор</span>
-                            <span class="meta-item"><i class="fas fa-ruler-combined"></i> 270 м / 57,000 т</span>
+                    <div class="museum-content">
+                        <h3>Центральный музей бронетанкового вооружения и техники</h3>
+                        <div class="museum-location">
+                            <i class="fas fa-map-marker-alt"></i> Кубинка, Россия
                         </div>
-                        <p>Последний класс линкоров, построенных США. Оказывал эффективную огневую поддержку во Второй мировой войне, Корее и Вьетнаме перед выводом из состава флота.</p>
-                        <div class="card-footer">
-                            <span><i class="fas fa-bolt"></i> 9 × 406 мм орудий</span>
-                            <button class="card-btn">Подробнее</button>
+                        <p>Крупнейшая коллекция бронетанковой техники в мире, включающая уникальные экспонаты от Первой мировой до современных образцов.</p>
+                        <div class="museum-stats">
+                            <div class="museum-stat">
+                                <div class="stat-number">350+</div>
+                                <div class="stat-label">экспонатов</div>
+                            </div>
+                            <div class="museum-stat">
+                                <div class="stat-number">1931</div>
+                                <div class="stat-label">год основания</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="equipment-card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1677622569900-835254fbb679?q=80&w=1471" alt="Истребитель F-22">
-                        <div class="country-tag">
-                            <i class="fas fa-flag"></i> США
-                        </div>
+                <div class="museum-card">
+                    <div class="museum-image">
+                        <img src="https://images.unsplash.com/photo-1545912452-8aea7e25a3d3?q=80&w=1374" alt="Музей авиации">
                     </div>
-                    <div class="card-content">
-                        <h3>F-22 Раптор <span class="equipment-year">2005-Настоящее</span></h3>
-                        <div class="equipment-meta">
-                            <span class="meta-item"><i class="fas fa-fighter-jet"></i> Истребитель превосходства</span>
-                            <span class="meta-item"><i class="fas fa-tachometer-alt"></i> 2,25 Маха</span>
+                    <div class="museum-content">
+                        <h3>Национальный музей ВВС США</h3>
+                        <div class="museum-location">
+                            <i class="fas fa-map-marker-alt"></i> Дейтон, Огайо, США
                         </div>
-                        <p>Истребитель пятого поколения с технологиями невидимости, оптимизированный для превосходства в воздухе. Оснащён передовой авионикой, радиолокационными системами и способен к сверхзвуковому полёту без форсажа.</p>
-                        <div class="card-footer">
-                            <span><i class="fas fa-eye"></i> АФАР-радар</span>
-                            <button class="card-btn">Подробнее</button>
+                        <p>Крупнейший и старейший в мире музей военной авиации с коллекцией из более чем 360 летательных аппаратов.</p>
+                        <div class="museum-stats">
+                            <div class="museum-stat">
+                                <div class="stat-number">360+</div>
+                                <div class="stat-label">самолётов</div>
+                            </div>
+                            <div class="museum-stat">
+                                <div class="stat-number">1923</div>
+                                <div class="stat-label">год основания</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -997,6 +1103,7 @@
     </footer>
 
     <script>
+        // Интерактивность для карточек
         document.querySelectorAll('.card-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const equipmentName = this.closest('.equipment-card').querySelector('h3').textContent;
@@ -1005,17 +1112,34 @@
         });
         
         document.querySelector('.hero-buttons .btn-primary').addEventListener('click', function() {
-            alert('Переход к экспонатам. В реальном приложении будет навигация к разделу с техникой.');
+            alert('Переход к коллекции. В реальном приложении будет навигация к каталогу техники.');
         });
         
         document.querySelector('.hero-buttons .btn-secondary').addEventListener('click', function() {
             alert('Переход к историческим периодам. В реальном приложении будет навигация к хронологии.');
         });
         
-        document.querySelector('.search-bar').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                alert(`Поиск: "${this.value}". В реальном приложении будет выполнен поиск по каталогу.`);
-            }
+        // Анимация появления элементов при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Добавляем анимацию появления для карточек
+        document.querySelectorAll('.era-card, .equipment-card, .museum-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
         });
     </script>
 </body>
