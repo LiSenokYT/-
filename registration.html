@@ -735,9 +735,9 @@
         document.getElementById('registrationForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.querySelector('input[type="email"]');
-            const password = document.querySelectorAll('input[type="password"]')[0];
-            const username = document.querySelector('input[placeholder="Введите имя пользователя"]');
+            const emailEl = document.querySelector('input[type="email"]');
+            const passwordEl = document.querySelectorAll('input[type="password"]')[0];
+            const usernameEl = document.querySelector('input[placeholder="Введите имя пользователя"]');
 
             if (!email || !password || !username) {
                 alert('Ошибка: не найдены поля формы');
