@@ -1,10 +1,10 @@
 import { supabase } from './supabase.js'
 
+// Функция регистрации
 export async function registerUser(email, password, username) {
   try {
     console.log('🔧 Starting registration...', { email, username });
     
-    // 1. РЕГИСТРАЦИЯ
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password
@@ -14,7 +14,7 @@ export async function registerUser(email, password, username) {
 
     console.log('✅ User registered:', data.user);
 
-    // 2. СОЗДАНИЕ ПРОФИЛЯ С ПРОВЕРКОЙ
+    // Создание профиля
     console.log('🎯 Creating profile for user:', data.user.id);
     
     const { data: profileData, error: profileError } = await supabase
@@ -29,8 +29,7 @@ export async function registerUser(email, password, username) {
     console.log('📊 Profile creation result:', { profileData, profileError });
 
     if (profileError) {
-      console.error('❌ Profile error details:', profileError);
-      // Но все равно возвращаем успех, т.к. пользователь создан
+      console.error('❌ Profile error:', profileError);
       return { success: true, user: data.user, profileError: profileError.message };
     }
 
@@ -41,4 +40,31 @@ export async function registerUser(email, password, username) {
     console.error('🚨 Registration error:', error);
     return { success: false, error: error.message };
   }
+}
+
+// Функция входа
+export async function loginUser(email, password) {
+  try {
+    console.log('🔐 Attempting login...', { email });
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) throw error;
+
+    console.log('✅ Login successful:', data.user);
+    return { success: true, user: data.user };
+
+  } catch (error) {
+    console.error('🚨 Login error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Функция выхода
+export async function logoutUser() {
+  const { error } = await supabase.auth.signOut();
+  if (error) console.error('Logout error:', error);
 }
