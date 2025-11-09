@@ -4,7 +4,7 @@ export async function registerUser(email, password, username) {
   try {
     console.log('🔧 Starting registration...', { email, username });
     
-    // 1. РЕГИСТРАЦИЯ (это работало)
+    // 1. РЕГИСТРАЦИЯ
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password
@@ -14,28 +14,28 @@ export async function registerUser(email, password, username) {
 
     console.log('✅ User registered:', data.user);
 
-    // 2. ПРОФИЛЬ - ПРОСТОЙ ВАРИАНТ
-    try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          { 
-            id: data.user.id, 
-            username: username,
-            email: email
-          }
-        ]);
+    // 2. СОЗДАНИЕ ПРОФИЛЯ С ПРОВЕРКОЙ
+    console.log('🎯 Creating profile for user:', data.user.id);
+    
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: data.user.id,
+        username: username,
+        email: email
+      })
+      .select();
 
-      if (profileError) {
-        console.warn('⚠️ Profile not created:', profileError.message);
-      } else {
-        console.log('✅ Profile created successfully');
-      }
-    } catch (profileError) {
-      console.warn('⚠️ Profile creation failed:', profileError.message);
+    console.log('📊 Profile creation result:', { profileData, profileError });
+
+    if (profileError) {
+      console.error('❌ Profile error details:', profileError);
+      // Но все равно возвращаем успех, т.к. пользователь создан
+      return { success: true, user: data.user, profileError: profileError.message };
     }
 
-    return { success: true, user: data.user };
+    console.log('✅ Profile created:', profileData);
+    return { success: true, user: data.user, profile: profileData };
     
   } catch (error) {
     console.error('🚨 Registration error:', error);
