@@ -859,6 +859,49 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification-error {
+            background: #dc2626;
+        }
+
+        .notification-warning {
+            background: #f59e0b;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-content i {
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -918,9 +961,6 @@
                         <button class="nav-item" data-section="privacy">
                             <i class="fas fa-lock"></i> Настройки приватности
                         </button>
-                        <button class="nav-item" data-section="notifications">
-                            <i class="fas fa-bell"></i> Уведомления
-                        </button>
                     </div>
                     
                     <div class="nav-category">
@@ -954,17 +994,17 @@
                             <div class="avatar-section">
                                 <div class="avatar-preview">
                                     <div class="avatar-image" id="avatarPreview">
-                                        ИИ
+                                        <!-- Аватар будет загружен динамически -->
                                     </div>
-                                    <div class="avatar-overlay">
+                                    <div class="avatar-overlay" id="avatarOverlay">
                                         <i class="fas fa-camera"></i>
                                     </div>
                                 </div>
                                 <div class="avatar-actions">
-                                    <button class="btn btn-primary">
+                                    <button class="btn btn-primary" id="uploadAvatarBtn">
                                         <i class="fas fa-upload"></i> Загрузить фото
                                     </button>
-                                    <button class="btn btn-secondary">
+                                    <button class="btn btn-secondary" id="generateAvatarBtn">
                                         <i class="fas fa-sync-alt"></i> Сгенерировать аватар
                                     </button>
                                     <p class="form-help">Рекомендуемый размер: 400×400 пикселей. Поддерживаются JPG, PNG.</p>
@@ -974,13 +1014,13 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label">Имя пользователя *</label>
-                                    <input type="text" class="form-input" placeholder="Введите имя пользователя" value="ivan_ivanov">
+                                    <input type="text" class="form-input" id="usernameInput" placeholder="Введите имя пользователя">
                                     <p class="form-help">Уникальное имя для вашего профиля. Можно использовать буквы, цифры и подчеркивания.</p>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="form-label">Полное имя</label>
-                                    <input type="text" class="form-input" placeholder="Введите ваше полное имя" value="Иван Иванов">
+                                    <input type="text" class="form-input" id="fullNameInput" placeholder="Введите ваше полное имя">
                                     <p class="form-help">Ваше настоящее имя (необязательно)</p>
                                 </div>
                             </div>
@@ -995,22 +1035,21 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label">Электронная почта *</label>
-                                    <input type="email" class="form-input" placeholder="your@email.com" value="ivan@example.com">
-                                    <p class="form-help">
-                                        <i class="fas fa-check-circle" style="color: #10b981;"></i> 
-                                        Почта подтверждена
+                                    <input type="email" class="form-input" id="emailInput" placeholder="your@email.com" readonly>
+                                    <p class="form-help" id="emailHelp">
+                                        <!-- Статус email будет обновлен динамически -->
                                     </p>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="form-label">Веб-сайт</label>
-                                    <input type="url" class="form-input" placeholder="https://example.com">
+                                    <input type="url" class="form-input" id="websiteInput" placeholder="https://example.com">
                                     <p class="form-help">Ссылка на ваш сайт или социальную сеть</p>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="form-label">Местоположение</label>
-                                    <input type="text" class="form-input" placeholder="Город, страна">
+                                    <input type="text" class="form-input" id="locationInput" placeholder="Город, страна">
                                     <p class="form-help">Ваше текущее местоположение</p>
                                 </div>
                             </div>
@@ -1024,9 +1063,18 @@
                             
                             <div class="form-group">
                                 <label class="form-label">Биография</label>
-                                <textarea class="form-input form-textarea" placeholder="Расскажите о себе, ваших интересах в военной технике...">Участник сообщества с 2023 года. Специализация: советская бронетехника Второй мировой войны. Интересуюсь историей развития танкостроения и авиации.</textarea>
-                                <p class="form-help">Максимум 500 символов. <span id="bioCounter">125/500</span></p>
+                                <textarea class="form-input form-textarea" id="bioInput" placeholder="Расскажите о себе, ваших интересах в военной технике..."></textarea>
+                                <p class="form-help">Максимум 500 символов. <span id="bioCounter">0/500</span></p>
                             </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" id="cancelProfileBtn">
+                                <i class="fas fa-times"></i> Отмена
+                            </button>
+                            <button class="btn btn-primary" id="saveProfileBtn">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
                         </div>
                     </div>
                     
@@ -1044,26 +1092,30 @@
                         
                         <div class="form-group">
                             <label class="form-label">Текущий пароль</label>
-                            <input type="password" class="form-input" placeholder="Введите текущий пароль">
+                            <input type="password" class="form-input" id="currentPasswordInput" placeholder="Введите текущий пароль">
                         </div>
                         
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label">Новый пароль</label>
-                                <input type="password" class="form-input" placeholder="Введите новый пароль">
+                                <input type="password" class="form-input" id="newPasswordInput" placeholder="Введите новый пароль">
                             </div>
                             
                             <div class="form-group">
                                 <label class="form-label">Подтвердите пароль</label>
-                                <input type="password" class="form-input" placeholder="Повторите новый пароль">
+                                <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Повторите новый пароль">
                             </div>
                         </div>
                         
                         <p class="form-help">Пароль должен содержать не менее 8 символов, включая цифры и специальные знаки.</p>
                         
                         <div class="action-buttons">
-                            <button class="btn btn-secondary">Отмена</button>
-                            <button class="btn btn-primary">Сменить пароль</button>
+                            <button class="btn btn-secondary" id="cancelPasswordBtn">
+                                <i class="fas fa-times"></i> Отмена
+                            </button>
+                            <button class="btn btn-primary" id="changePasswordBtn">
+                                <i class="fas fa-key"></i> Сменить пароль
+                            </button>
                         </div>
                     </div>
                     
@@ -1085,7 +1137,7 @@
                                 <div class="switch-description">Разрешить другим пользователям просматривать ваш профиль</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" checked>
+                                <input type="checkbox" id="publicProfileToggle" checked>
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1096,7 +1148,7 @@
                                 <div class="switch-description">Разрешить показывать ваш email в профиле</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox">
+                                <input type="checkbox" id="showEmailToggle">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1107,9 +1159,18 @@
                                 <div class="switch-description">Разрешить другим пользователям отправлять вам сообщения</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" checked>
+                                <input type="checkbox" id="allowMessagesToggle" checked>
                                 <span class="slider"></span>
                             </label>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" id="cancelPrivacyBtn">
+                                <i class="fas fa-times"></i> Отмена
+                            </button>
+                            <button class="btn btn-primary" id="savePrivacyBtn">
+                                <i class="fas fa-save"></i> Сохранить настройки
+                            </button>
                         </div>
                     </div>
                     
@@ -1134,7 +1195,7 @@
                                 После удаления аккаунта все ваши данные будут безвозвратно удалены. 
                                 Это действие нельзя отменить. Пожалуйста, убедитесь в своем решении.
                             </p>
-                            <button class="btn btn-danger">
+                            <button class="btn btn-danger" id="deleteAccountBtn">
                                 <i class="fas fa-trash"></i> Удалить мой аккаунт
                             </button>
                         </div>
@@ -1148,20 +1209,10 @@
                                 Загрузите копию всех ваших данных с нашего сайта. 
                                 Файл будет содержать информацию о вашем профиле, закладках и активности.
                             </p>
-                            <button class="btn" style="background: #3b82f6; color: white;">
+                            <button class="btn" style="background: #3b82f6; color: white;" id="exportDataBtn">
                                 <i class="fas fa-file-export"></i> Экспортировать мои данные
                             </button>
                         </div>
-                    </div>
-                    
-                    <!-- Кнопки сохранения -->
-                    <div class="action-buttons">
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Отмена
-                        </button>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-save"></i> Сохранить изменения
-                        </button>
                     </div>
                 </main>
             </div>
@@ -1218,7 +1269,7 @@
             </div>
             
             <div class="copyright">
-                <p>&copy; 2025 Архив Брони. Сайт предназначен для образовательных и исторических целей.</p>
+                <p>&copy; 2023 Архив Брони. Сайт предназначен для образовательных и исторических целей.</p>
                 <p class="brand-info">Сохраняя военную историю через технологии</p>
             </div>
         </div>
@@ -1227,71 +1278,416 @@
     <!-- Подключение скриптов -->
     <script type="module" src="/js/supabase.js"></script>
     <script type="module" src="/js/navigation.js"></script>
-    
-    <script>
-        // Навигация между разделами настроек
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // Убираем активный класс у всех элементов
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                // Скрываем все секции
-                document.querySelectorAll('.content-section').forEach(section => section.style.display = 'none');
-                
-                // Добавляем активный класс текущему элементу
-                this.classList.add('active');
-                
-                // Показываем соответствующую секцию
-                const sectionId = this.getAttribute('data-section') + '-section';
-                document.getElementById(sectionId).style.display = 'block';
-            });
-        });
+    <script type="module">
+        import { supabase } from '/js/supabase.js'
 
-        // Подсчет символов в bio
-        const bioTextarea = document.querySelector('.form-textarea');
-        const bioCounter = document.getElementById('bioCounter');
-        
-        if (bioTextarea && bioCounter) {
-            bioTextarea.addEventListener('input', function() {
-                const length = this.value.length;
-                bioCounter.textContent = `${length}/500`;
+        class SettingsManager {
+            constructor() {
+                this.currentUser = null
+                this.userProfile = null
+                this.init()
+            }
+
+            async init() {
+                await this.checkAuth()
+                await this.loadUserProfile()
+                this.setupEventListeners()
+                this.populateForm()
+            }
+
+            async checkAuth() {
+                const { data: { user }, error } = await supabase.auth.getUser()
                 
-                if (length > 500) {
-                    bioCounter.style.color = '#dc2626';
-                } else {
-                    bioCounter.style.color = 'var(--text-gray)';
+                if (error || !user) {
+                    window.location.href = '/login.html'
+                    return
                 }
-            });
+                
+                this.currentUser = user
+            }
+
+            async loadUserProfile() {
+                try {
+                    const { data: profile, error } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', this.currentUser.id)
+                        .single()
+
+                    if (error) throw error
+
+                    this.userProfile = profile
+                    console.log('✅ Профиль загружен:', profile)
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка загрузки профиля:', error)
+                    this.showNotification('Ошибка загрузки профиля', 'error')
+                }
+            }
+
+            setupEventListeners() {
+                // Навигация
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'))
+                        document.querySelectorAll('.content-section').forEach(section => section.style.display = 'none')
+                        
+                        e.target.classList.add('active')
+                        const sectionId = e.target.getAttribute('data-section') + '-section'
+                        document.getElementById(sectionId).style.display = 'block'
+                    })
+                })
+
+                // Основная информация
+                document.getElementById('saveProfileBtn').addEventListener('click', () => this.saveProfile())
+                document.getElementById('cancelProfileBtn').addEventListener('click', () => this.populateForm())
+                
+                // Безопасность
+                document.getElementById('changePasswordBtn').addEventListener('click', () => this.changePassword())
+                document.getElementById('cancelPasswordBtn').addEventListener('click', () => {
+                    document.getElementById('currentPasswordInput').value = ''
+                    document.getElementById('newPasswordInput').value = ''
+                    document.getElementById('confirmPasswordInput').value = ''
+                })
+                
+                // Приватность
+                document.getElementById('savePrivacyBtn').addEventListener('click', () => this.savePrivacySettings())
+                document.getElementById('cancelPrivacyBtn').addEventListener('click', () => this.populateForm())
+                
+                // Опасная зона
+                document.getElementById('deleteAccountBtn').addEventListener('click', () => this.deleteAccount())
+                document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData())
+                
+                // Аватар
+                document.getElementById('uploadAvatarBtn').addEventListener('click', () => this.uploadAvatar())
+                document.getElementById('generateAvatarBtn').addEventListener('click', () => this.generateAvatar())
+                document.getElementById('avatarOverlay').addEventListener('click', () => this.uploadAvatar())
+                
+                // Bio counter
+                document.getElementById('bioInput').addEventListener('input', (e) => this.updateBioCounter(e.target.value))
+            }
+
+            populateForm() {
+                if (!this.userProfile) return
+
+                // Основная информация
+                document.getElementById('usernameInput').value = this.userProfile.username || ''
+                document.getElementById('fullNameInput').value = this.userProfile.full_name || ''
+                document.getElementById('emailInput').value = this.currentUser.email || ''
+                document.getElementById('websiteInput').value = this.userProfile.website || ''
+                document.getElementById('locationInput').value = this.userProfile.location || ''
+                document.getElementById('bioInput').value = this.userProfile.bio || ''
+                
+                this.updateBioCounter(this.userProfile.bio || '')
+                this.updateAvatarPreview()
+                this.updateEmailStatus()
+                
+                // Приватность
+                if (this.userProfile.privacy_settings) {
+                    const privacy = this.userProfile.privacy_settings
+                    document.getElementById('publicProfileToggle').checked = privacy.profile_public !== false
+                    document.getElementById('showEmailToggle').checked = privacy.email_public === true
+                    document.getElementById('allowMessagesToggle').checked = privacy.allow_messages !== false
+                }
+            }
+
+            updateBioCounter(text) {
+                const counter = document.getElementById('bioCounter')
+                const length = text.length
+                counter.textContent = `${length}/500`
+                counter.style.color = length > 500 ? '#dc2626' : 'var(--text-gray)'
+            }
+
+            updateAvatarPreview() {
+                const avatarPreview = document.getElementById('avatarPreview')
+                
+                if (this.userProfile.avatar_url) {
+                    avatarPreview.innerHTML = `<img src="${this.userProfile.avatar_url}" alt="Аватар" onerror="this.style.display='none'">`
+                } else {
+                    const username = this.userProfile.username || this.currentUser.email
+                    const initials = username.substring(0, 2).toUpperCase()
+                    avatarPreview.innerHTML = initials
+                    avatarPreview.style.background = this.getAvatarColor(username)
+                }
+            }
+
+            getAvatarColor(username) {
+                const colors = [
+                    'linear-gradient(135deg, #d4af37, #f5e1a2)',
+                    'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                    'linear-gradient(135deg, #10b981, #34d399)',
+                    'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+                    'linear-gradient(135deg, #ef4444, #f87171)',
+                    'linear-gradient(135deg, #f59e0b, #fbbf24)'
+                ]
+                
+                let hash = 0
+                for (let i = 0; i < username.length; i++) {
+                    hash = username.charCodeAt(i) + ((hash << 5) - hash)
+                }
+                const index = Math.abs(hash) % colors.length
+                return colors[index]
+            }
+
+            updateEmailStatus() {
+                const emailHelp = document.getElementById('emailHelp')
+                if (this.currentUser.email_confirmed_at) {
+                    emailHelp.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Почта подтверждена'
+                } else {
+                    emailHelp.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Почта не подтверждена'
+                }
+            }
+
+            async saveProfile() {
+                const saveBtn = document.getElementById('saveProfileBtn')
+                const originalText = saveBtn.innerHTML
+                
+                try {
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...'
+                    saveBtn.disabled = true
+
+                    const formData = {
+                        username: document.getElementById('usernameInput').value.trim(),
+                        full_name: document.getElementById('fullNameInput').value.trim(),
+                        website: document.getElementById('websiteInput').value.trim(),
+                        location: document.getElementById('locationInput').value.trim(),
+                        bio: document.getElementById('bioInput').value.trim(),
+                        updated_at: new Date().toISOString()
+                    }
+
+                    if (!formData.username) {
+                        throw new Error('Имя пользователя обязательно')
+                    }
+
+                    if (formData.bio.length > 500) {
+                        throw new Error('Биография не должна превышать 500 символов')
+                    }
+
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .update(formData)
+                        .eq('id', this.currentUser.id)
+                        .select()
+
+                    if (error) throw error
+
+                    this.userProfile = { ...this.userProfile, ...formData }
+                    this.showNotification('Профиль успешно обновлен!', 'success')
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка сохранения профиля:', error)
+                    this.showNotification(error.message || 'Ошибка сохранения профиля', 'error')
+                } finally {
+                    saveBtn.innerHTML = originalText
+                    saveBtn.disabled = false
+                }
+            }
+
+            async changePassword() {
+                const currentPassword = document.getElementById('currentPasswordInput').value
+                const newPassword = document.getElementById('newPasswordInput').value
+                const confirmPassword = document.getElementById('confirmPasswordInput').value
+
+                try {
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        throw new Error('Заполните все поля пароля')
+                    }
+
+                    if (newPassword !== confirmPassword) {
+                        throw new Error('Пароли не совпадают')
+                    }
+
+                    if (newPassword.length < 8) {
+                        throw new Error('Пароль должен содержать минимум 8 символов')
+                    }
+
+                    const { error } = await supabase.auth.updateUser({
+                        password: newPassword
+                    })
+
+                    if (error) throw error
+
+                    document.getElementById('currentPasswordInput').value = ''
+                    document.getElementById('newPasswordInput').value = ''
+                    document.getElementById('confirmPasswordInput').value = ''
+
+                    this.showNotification('Пароль успешно изменен!', 'success')
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка смены пароля:', error)
+                    this.showNotification(error.message || 'Ошибка смены пароля', 'error')
+                }
+            }
+
+            async savePrivacySettings() {
+                try {
+                    const privacySettings = {
+                        profile_public: document.getElementById('publicProfileToggle').checked,
+                        email_public: document.getElementById('showEmailToggle').checked,
+                        allow_messages: document.getElementById('allowMessagesToggle').checked
+                    }
+
+                    const { error } = await supabase
+                        .from('profiles')
+                        .update({ 
+                            privacy_settings: privacySettings,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', this.currentUser.id)
+
+                    if (error) throw error
+
+                    this.showNotification('Настройки приватности сохранены!', 'success')
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка сохранения настроек приватности:', error)
+                    this.showNotification('Ошибка сохранения настроек приватности', 'error')
+                }
+            }
+
+            async uploadAvatar() {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = 'image/*'
+                
+                input.onchange = async (e) => {
+                    const file = e.target.files[0]
+                    if (!file) return
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.showNotification('Файл слишком большой (макс. 5MB)', 'error')
+                        return
+                    }
+
+                    try {
+                        const fileExt = file.name.split('.').pop()
+                        const fileName = `${this.currentUser.id}/${Math.random()}.${fileExt}`
+                        
+                        const { error: uploadError } = await supabase.storage
+                            .from('avatars')
+                            .upload(fileName, file)
+
+                        if (uploadError) throw uploadError
+
+                        const { data: { publicUrl } } = supabase.storage
+                            .from('avatars')
+                            .getPublicUrl(fileName)
+
+                        const { error: updateError } = await supabase
+                            .from('profiles')
+                            .update({ 
+                                avatar_url: publicUrl,
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq('id', this.currentUser.id)
+
+                        if (updateError) throw updateError
+
+                        this.userProfile.avatar_url = publicUrl
+                        this.updateAvatarPreview()
+                        this.showNotification('Аватар успешно обновлен!', 'success')
+                        
+                    } catch (error) {
+                        console.error('❌ Ошибка загрузки аватара:', error)
+                        this.showNotification('Ошибка загрузки аватара', 'error')
+                    }
+                }
+
+                input.click()
+            }
+
+            generateAvatar() {
+                const avatarPreview = document.getElementById('avatarPreview')
+                const username = this.userProfile.username || this.currentUser.email
+                const initials = username.substring(0, 2).toUpperCase()
+                
+                avatarPreview.innerHTML = initials
+                avatarPreview.style.background = this.getAvatarColor(username)
+                
+                this.showNotification('Аватар сгенерирован!', 'success')
+            }
+
+            async deleteAccount() {
+                if (!confirm('Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить. Все ваши данные будут безвозвратно удалены.')) {
+                    return
+                }
+
+                try {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .delete()
+                        .eq('id', this.currentUser.id)
+
+                    if (profileError) throw profileError
+
+                    await supabase.auth.signOut()
+                    
+                    this.showNotification('Аккаунт успешно удален', 'success')
+                    setTimeout(() => {
+                        window.location.href = '/index.html'
+                    }, 2000)
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка удаления аккаунта:', error)
+                    this.showNotification('Ошибка удаления аккаунта', 'error')
+                }
+            }
+
+            async exportData() {
+                try {
+                    const userData = {
+                        profile: this.userProfile,
+                        auth: {
+                            email: this.currentUser.email,
+                            created_at: this.currentUser.created_at,
+                            last_sign_in: this.currentUser.last_sign_in_at
+                        },
+                        export_date: new Date().toISOString()
+                    }
+
+                    const dataStr = JSON.stringify(userData, null, 2)
+                    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+                    
+                    const link = document.createElement('a')
+                    link.href = URL.createObjectURL(dataBlob)
+                    link.download = `archive-broni-export-${new Date().toISOString().split('T')[0]}.json`
+                    link.click()
+                    
+                    this.showNotification('Данные успешно экспортированы!', 'success')
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка экспорта данных:', error)
+                    this.showNotification('Ошибка экспорта данных', 'error')
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div')
+                notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'warning' ? 'notification-warning' : ''}`
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `
+
+                document.body.appendChild(notification)
+
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease'
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification)
+                        }
+                    }, 300)
+                }, 5000)
+            }
         }
 
-        // Загрузка аватара
-        document.querySelector('.avatar-overlay').addEventListener('click', function() {
-            alert('Функция загрузки аватара будет реализована в следующем обновлении');
-        });
-
-        // Генерация аватара
-        document.querySelector('.avatar-actions .btn-secondary').addEventListener('click', function() {
-            const avatar = document.getElementById('avatarPreview');
-            const colors = ['#d4af37', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            avatar.style.background = `linear-gradient(135deg, ${randomColor}, ${randomColor}80)`;
-        });
-
-        // Сохранение настроек
-        document.querySelector('.action-buttons .btn-primary').addEventListener('click', function() {
-            alert('Настройки успешно сохранены!');
-        });
-
-        // Удаление аккаунта
-        document.querySelector('.btn-danger').addEventListener('click', function() {
-            if (confirm('Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.')) {
-                alert('Функция удаления аккаунта будет реализована в следующем обновлении');
-            }
-        });
-
-        // Экспорт данных
-        document.querySelector('[style*="background: #3b82f6"]').addEventListener('click', function() {
-            alert('Запрос на экспорт данных отправлен. Файл будет готов в течение 24 часов.');
-        });
+        // Инициализация когда DOM загружен
+        document.addEventListener('DOMContentLoaded', () => {
+            new SettingsManager()
+        })
     </script>
 </body>
 </html>
