@@ -723,8 +723,8 @@
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.querySelector('input[placeholder*="почту"]').value;
-        const password = document.querySelector('input[placeholder*="пароль"]').value;
+        const email = document.querySelector('input[placeholder="Введите email или имя пользователя"]').value;
+        const password = document.querySelector('input[placeholder="Введите ваш пароль"]').value;
 
         console.log('🔐 Attempting login:', email);
 
