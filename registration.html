@@ -733,6 +733,29 @@
         });
     </script>
     <script type="module" src="/js/supabase.js"></script>
-<script type="module" src="/js/test-auth.js"></script>
+    <script type="module" src="/js/auth.js"></script>
+    <script type="module">
+        import { registerUser } from '/js/auth.js';
+        
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.querySelector('input[type="email"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+            const username = document.querySelector('input[type="text"]').value;
+
+            console.log('📧 Регистрируем:', email, username);
+
+            const result = await registerUser(email, password, username);
+
+            if (result.success) {
+                alert('✅ Регистрация успешна! Проверь email для подтверждения.');
+                console.log('👤 User:', result.user);
+            } else {
+                alert('❌ Ошибка: ' + result.error);\
+                console.error('🚨 Error:', result.error);
+            }
+        });
+    </script>
 </body>
 </html>
