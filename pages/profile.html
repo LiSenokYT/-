@@ -6,6 +6,7 @@
     <title>Архив Брони - Личный кабинет</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ВСЕ ТВОИ СТИЛИ ИЗ user.html остаются без изменений */
         :root {
             --dark-base: #0c0e14;
             --dark-primary: #121726;
@@ -308,67 +309,22 @@
             padding-top: 12px !important;
         }
 
-        /* Стили профиля */
-        .profile-section {
+        /* Основной контент пользователя */
+        .user-section {
             padding: 3rem 0;
-            min-height: 60vh;
-        }
-
-        .profile-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 3rem;
-            background: rgba(26, 34, 50, 0.7);
-            border-radius: 15px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            text-align: center;
-        }
-
-        .profile-title {
-            color: var(--accent-gold);
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
         }
         
-        .profile-info {
-            background: rgba(12, 15, 22, 0.5);
-            padding: 2rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--accent-gold);
-            margin-bottom: 2rem;
-        }
-
-        .info-item {
-            margin-bottom: 1rem;
-            padding: 0.8rem;
-            background: rgba(212, 175, 55, 0.05);
-            border-radius: 6px;
-            text-align: left;
-        }
-
-        .info-item strong {
-            color: var(--accent-gold-light);
-            display: inline-block;
-            min-width: 180px;
-        }
-
-        .profile-actions {
+        .user-header {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            background: rgba(26, 34, 50, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
-
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
+        
         .user-avatar {
             width: 120px;
             height: 120px;
@@ -380,9 +336,298 @@
             font-size: 2.5rem;
             color: var(--dark-base);
             font-weight: bold;
-            margin: 0 auto 2rem;
             position: relative;
             overflow: hidden;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-rank {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .user-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Вкладки пользователя */
+        .user-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 1rem;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 6px;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: var(--transition);
+        }
+        
+        .tab-btn.active::after {
+            width: 100%;
+        }
+        
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Сетка закладок */
+        .bookmarks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .bookmark-card {
+            background: rgba(26, 34, 50, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: var(--transition);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .bookmark-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        .bookmark-image {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bookmark-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .bookmark-card:hover .bookmark-image img {
+            transform: scale(1.05);
+        }
+        
+        .bookmark-type {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(12, 14, 20, 0.9);
+            padding: 6px 15px;
+            border-radius: 20px;
+            color: var(--accent-gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .bookmark-content {
+            padding: 1.5rem;
+        }
+        
+        .bookmark-content h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            color: var(--accent-gold-light);
+        }
+        
+        .bookmark-meta {
+            display: flex;
+            gap: 10px;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        .bookmark-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        
+        .bookmark-btn {
+            padding: 6px 15px;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        
+        .bookmark-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .remove-btn {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(26, 34, 50, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+        
+        /* История активности */
+        .activity-list {
+            background: rgba(26, 34, 50, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            overflow: hidden;
+        }
+        
+        .activity-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        
+        .activity-time {
+            color: var(--text-gray);
+            font-size: 0.85rem;
         }
         
         /* Подвал сайта */
@@ -483,6 +728,17 @@
         }
         
         /* Адаптивные стили */
+        @media (max-width: 1024px) {
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-stats {
+                justify-content: center;
+            }
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -495,14 +751,46 @@
                 gap: 0.8rem;
             }
             
-            .profile-container {
-                padding: 2rem 1rem;
-                margin: 1rem;
+            .user-tabs {
+                flex-wrap: wrap;
             }
             
-            .profile-actions {
-                flex-direction: column;
+            .bookmarks-grid {
+                grid-template-columns: 1fr;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-name {
+                font-size: 1.5rem;
+            }
+            
+            .user-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Стили для состояния загрузки */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -537,31 +825,105 @@
         </div>
     </header>
 
-    <!-- Защищенный профиль -->
-    <section class="profile-section">
+    <!-- Личный кабинет -->
+    <section class="user-section">
         <div class="container">
-            <div class="profile-container">
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+            <!-- Шапка профиля -->
+            <div class="user-header">
+                <div class="user-avatar" id="userAvatar">
+                    <!-- Аватар будет загружен динамически -->
                 </div>
-                <h1 class="profile-title">Загрузка профиля...</h1>
-                
-                <div class="profile-info">
-                    <div id="userInfo">
-                        <p>Загрузка данных пользователя...</p>
+                <div class="user-info">
+                    <h1 class="user-name" id="userName">Загрузка...</h1>
+                    <span class="user-rank" id="userRank">Пользователь</span>
+                    <p id="userBio">Загрузка информации о пользователе...</p>
+                    
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="statBookmarks">0</div>
+                            <div class="stat-label">Закладок</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statViews">0</div>
+                            <div class="stat-label">Просмотров</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statComments">0</div>
+                            <div class="stat-label">Комментариев</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statDays">0</div>
+                            <div class="stat-label">Дней активности</div>
+                        </div>
                     </div>
                 </div>
+                <a href="/pages/settings.html" class="btn btn-primary">
+                    <i class="fas fa-cog"></i> Настройки профиля
+                </a>
+            </div>
+
+            <!-- Вкладки -->
+            <div class="user-tabs">
+                <button class="tab-btn active" data-tab="bookmarks">
+                    <i class="fas fa-bookmark"></i> Мои закладки
+                </button>
+                <button class="tab-btn" data-tab="activity">
+                    <i class="fas fa-history"></i> Активность
+                </button>
+                <button class="tab-btn" data-tab="stats">
+                    <i class="fas fa-chart-bar"></i> Статистика
+                </button>
+                <button class="tab-btn" data-tab="achievements">
+                    <i class="fas fa-trophy"></i> Достижения
+                </button>
+            </div>
+
+            <!-- Контент вкладок -->
+            <div class="tab-content active" id="bookmarks">
+                <h2 style="margin-bottom: 2rem; color: var(--accent-gold);">Сохранённые экспонаты</h2>
                 
-                <div class="profile-actions">
-                    <button class="btn btn-primary" onclick="location.href='/index.html'">
-                        <i class="fas fa-home"></i> На главную
-                    </button>
-                    <button class="btn btn-primary" onclick="location.href='/pages/settings.html'">
-                        <i class="fas fa-cog"></i> Настройки
-                    </button>
-                    <button class="btn btn-danger" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Выйти
-                    </button>
+                <div class="bookmarks-grid" id="bookmarksList">
+                    <!-- Закладки будут загружены динамически -->
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- Вкладка активности -->
+            <div class="tab-content" id="activity">
+                <h2 style="margin-bottom: 2rem; color: var(--accent-gold);">История активности</h2>
+                
+                <div class="activity-list" id="activityList">
+                    <!-- Активность будет загружена динамически -->
+                    <div class="activity-item skeleton" style="height: 80px;"></div>
+                    <div class="activity-item skeleton" style="height: 80px;"></div>
+                    <div class="activity-item skeleton" style="height: 80px;"></div>
+                </div>
+            </div>
+
+            <!-- Вкладка статистики -->
+            <div class="tab-content" id="stats">
+                <h2 style="margin-bottom: 2rem; color: var(--accent-gold);">Статистика активности</h2>
+                
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Статистика будет загружена динамически -->
+                    <div class="stat-card skeleton" style="height: 200px;"></div>
+                    <div class="stat-card skeleton" style="height: 200px;"></div>
+                    <div class="stat-card skeleton" style="height: 200px;"></div>
+                    <div class="stat-card skeleton" style="height: 200px;"></div>
+                </div>
+            </div>
+
+            <!-- Вкладка достижений -->
+            <div class="tab-content" id="achievements">
+                <h2 style="margin-bottom: 2rem; color: var(--accent-gold);">Достижения и награды</h2>
+                
+                <div class="bookmarks-grid" id="achievementsList">
+                    <!-- Достижения будут загружены динамически -->
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
                 </div>
             </div>
         </div>
@@ -626,6 +988,51 @@
     <!-- Подключение скриптов -->
     <script type="module" src="/js/supabase.js"></script>
     <script type="module" src="/js/navigation.js"></script>
-    <script type="module" src="/js/protect-profile.js"></script>
+    <script type="module" src="/js/profile-enhanced.js"></script>
+
+    <script>
+        // Базовые функции для вкладок (остаются из твоего кода)
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Удаление закладок
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-btn')) {
+                const card = e.target.closest('.bookmark-card');
+                const itemName = card.querySelector('h3').textContent;
+                
+                if (confirm(`Удалить "${itemName}" из закладок?`)) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(100px)';
+                    setTimeout(() => {
+                        card.remove();
+                    }, 300);
+                }
+            }
+        });
+
+        // Анимация появления элементов
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.bookmark-card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
 </body>
 </html>
