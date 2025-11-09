@@ -749,6 +749,10 @@
                 return;
             }
 
+            const email = emailEl.value;
+            const password = passwordEl.value;
+            const username = usernameEl.value;
+
             console.log('📧 Регистрируем:', email, username);
 
             const result = await registerUser(email, password, username);
