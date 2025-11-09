@@ -79,7 +79,6 @@
             z-index: 10;
         }
         
-        /* Шапка сайта */
         header {
             background: rgba(26, 34, 50, 0.95);
             backdrop-filter: blur(10px);
@@ -201,6 +200,7 @@
             transition: var(--transition);
             border: none;
             cursor: pointer;
+            text-decoration: none;
         }
         
         .icon-btn:hover {
@@ -232,7 +232,6 @@
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
         
-        /* Секция регистрации */
         .registration-section {
             display: flex;
             justify-content: center;
@@ -413,7 +412,6 @@
             text-decoration: underline;
         }
         
-        /* Подвал сайта */
         footer {
             background: rgba(12, 15, 22, 0.95);
             padding: 4rem 0 2rem;
@@ -459,6 +457,7 @@
             border-radius: 50%;
             color: var(--accent-gold);
             transition: var(--transition);
+            text-decoration: none;
         }
         
         .social-links a:hover {
@@ -509,7 +508,6 @@
             opacity: 0.8;
         }
         
-        /* Адаптивные стили */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -544,12 +542,10 @@
     </style>
 </head>
 <body>
-    <!-- Декоративные элементы -->
     <div class="grid-overlay"></div>
     <div class="gold-dot dot-1"></div>
     <div class="gold-dot dot-2"></div>
     
-    <!-- Шапка сайта -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -571,15 +567,14 @@
                     <button class="icon-btn">
                         <i class="fas fa-bookmark"></i>
                     </button>
-                    <button class="icon-btn">
-                        <i class="fas fa-user"></i>
-                    </button>
+                    <a href="login.html" class="icon-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Секция регистрации -->
     <section class="registration-section">
         <div class="container">
             <div class="registration-container">
@@ -652,7 +647,6 @@
         </div>
     </section>
 
-    <!-- Подвал сайта -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -709,7 +703,6 @@
     </footer>
 
     <script>
-        // Переключение видимости пароля
         document.querySelectorAll('.password-toggle').forEach(toggle => {
             toggle.addEventListener('click', function() {
                 const input = this.previousElementSibling;
@@ -727,24 +720,11 @@
             });
         });
         
-        // Обработка формы регистрации
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Базовая валидация формы
-            const password = this.querySelector('input[type="password"]').value;
-            const confirmPassword = this.querySelectorAll('input[type="password"]')[1].value;
-            
-            if (password !== confirmPassword) {
-                alert('Пароли не совпадают!');
-                return;
-            }
-            
-            // Сообщение о демо-режиме
             alert('Регистрация в демо-режиме. В реальном приложении данные будут отправлены на сервер.');
         });
         
-        // Обработка социальных кнопок
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const provider = this.querySelector('i').className.includes('google') ? 'Google' : 'GitHub';
