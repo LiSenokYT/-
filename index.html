@@ -761,6 +761,80 @@
                 padding: 2rem 1.5rem;
             }
         }
+        /* Стили для меню пользователя */
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            position: relative;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .user-name {
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(26, 34, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .user-info:hover .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .logout-btn {
+            border-top: 1px solid rgba(212, 175, 55, 0.1) !important;
+            margin-top: 5px;
+            padding-top: 12px !important;
+        }
     </style>
 </head>
 <body>
@@ -1142,5 +1216,7 @@
             observer.observe(card);
         });
     </script>
+    <script type="module" src="/js/supabase.js"></script>
+<script type="module" src="/js/navigation.js"></script>
 </body>
 </html>
