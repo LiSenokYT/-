@@ -3,15 +3,17 @@ import { supabase } from './supabase.js'
 async function testSupabase() {
   console.log('🔧 Testing Supabase connection...')
   
-  // Простой тест - получаем текущего пользователя
-  const { data: { user }, error } = await supabase.auth.getUser()
-  
+  // Тест простого запроса к БД вместо аутентификации
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .limit(1)
+
   if (error) {
-    console.log('❌ Auth error:', error.message)
+    console.log('❌ Database error:', error.message)
   } else {
-    console.log('✅ Supabase connected! User:', user)
+    console.log('✅ Supabase connected! Data:', data)
   }
 }
 
-// Запускаем тест
 testSupabase()
