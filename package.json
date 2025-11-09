@@ -1,0 +1,14 @@
+{
+  "name": "military-archive",
+  "version": "1.0.0", 
+  "scripts": {
+    "build": "prisma generate && prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "prisma": "^5.7.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^2.0.0"
+  }
+}
