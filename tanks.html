@@ -79,7 +79,6 @@
             z-index: 10;
         }
         
-        /* Шапка сайта */
         header {
             background: rgba(26, 34, 50, 0.95);
             backdrop-filter: blur(10px);
@@ -199,9 +198,8 @@
             border-radius: 6px;
             color: var(--accent-gold);
             transition: var(--transition);
-            border: none;
-            cursor: pointer;
             text-decoration: none;
+            cursor: pointer;
         }
         
         .icon-btn:hover {
@@ -233,7 +231,6 @@
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
         
-        /* Главный баннер для танков */
         .tank-hero {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
                          url('https://images.unsplash.com/photo-1587886401819-ded8789b208a?q=80&w=1470') no-repeat center center/cover;
@@ -294,7 +291,6 @@
             font-size: 1rem;
         }
         
-        /* Фильтрация танков */
         .tank-filters {
             background: rgba(26, 34, 50, 0.8);
             margin: 3rem auto;
@@ -368,7 +364,6 @@
             background: rgba(212, 175, 55, 0.1);
         }
         
-        /* Галерея танков */
         .tank-gallery {
             margin: 3rem 0 4rem;
         }
@@ -515,7 +510,6 @@
             color: var(--accent-gold);
         }
         
-        /* Постраничная навигация */
         .pagination {
             display: flex;
             justify-content: center;
@@ -558,7 +552,6 @@
             cursor: not-allowed;
         }
         
-        /* Подвал сайта */
         footer {
             background: rgba(12, 15, 22, 0.95);
             padding: 4rem 0 2rem;
@@ -604,6 +597,7 @@
             border-radius: 50%;
             color: var(--accent-gold);
             transition: var(--transition);
+            text-decoration: none;
         }
         
         .social-links a:hover {
@@ -654,7 +648,6 @@
             opacity: 0.8;
         }
         
-        /* Адаптивные стили */
         @media (max-width: 1024px) {
             .tank-hero h1 {
                 font-size: 2.8rem;
@@ -720,12 +713,10 @@
     </style>
 </head>
 <body>
-    <!-- Декоративные элементы -->
     <div class="grid-overlay"></div>
     <div class="gold-dot dot-1"></div>
     <div class="gold-dot dot-2"></div>
     
-    <!-- Шапка сайта -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -749,13 +740,12 @@
                     </button>
                     <a href="registration.html" class="icon-btn">
                         <i class="fas fa-user"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Главный баннер для танков -->
     <section class="tank-hero">
         <div class="container">
             <div class="tank-hero-content">
@@ -780,7 +770,6 @@
         </div>
     </section>
 
-    <!-- Фильтрация танков -->
     <section class="tank-filters">
         <div class="container">
             <div class="filters-header">
@@ -866,7 +855,6 @@
         </div>
     </section>
 
-    <!-- Галерея танков -->
     <section class="tank-gallery">
         <div class="container">
             <div class="gallery-header">
@@ -875,7 +863,6 @@
             </div>
             
             <div class="tank-grid">
-                <!-- Танк 1 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1546345501-c12f135fb1b0?q=80&w=1470" alt="Танк Т-34">
@@ -897,7 +884,6 @@
                     </div>
                 </div>
                 
-                <!-- Танк 2 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1587886401819-ded8789b208a?q=80&w=1470" alt="Танк Абрамс">
@@ -919,7 +905,6 @@
                     </div>
                 </div>
                 
-                <!-- Танк 3 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1587886658170-9c0d0b54b0d6?q=80&w=1470" alt="Танк Тигр">
@@ -941,7 +926,6 @@
                     </div>
                 </div>
                 
-                <!-- Танк 4 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1632670944517-5a0b0a0b0b0b?q=80&w=1470" alt="Танк Т-14 Армата">
@@ -963,7 +947,6 @@
                     </div>
                 </div>
                 
-                <!-- Танк 5 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1600054800747-fe98fce4149e?q=80&w=1472" alt="Танк Леклерк">
@@ -985,7 +968,6 @@
                     </div>
                 </div>
                 
-                <!-- Танк 6 -->
                 <div class="tank-card">
                     <div class="tank-image">
                         <img src="https://images.unsplash.com/photo-1629443995600-b5d0c0f2d0b5?q=80&w=1470" alt="Танк Челленджер">
@@ -1008,7 +990,6 @@
                 </div>
             </div>
             
-            <!-- Постраничная навигация -->
             <div class="pagination">
                 <a href="#" class="page-link prev disabled">
                     <i class="fas fa-chevron-left"></i> Назад
@@ -1025,7 +1006,6 @@
         </div>
     </section>
 
-    <!-- Подвал сайта -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -1082,7 +1062,6 @@
     </footer>
 
     <script>
-        // Обработка фильтров
         document.querySelector('.btn-primary').addEventListener('click', function() {
             alert('Фильтры применены. В реальном приложении здесь будет обновление списка танков.');
         });
@@ -1102,7 +1081,6 @@
             alert('Фильтры сброшены.');
         });
         
-        // Обработка кнопок "Подробнее"
         document.querySelectorAll('.tank-btn').forEach(btn => {
             if (btn.tagName === 'BUTTON') {
                 btn.addEventListener('click', function() {
@@ -1114,4 +1092,3 @@
     </script>
 </body>
 </html>
-
