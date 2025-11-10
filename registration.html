@@ -232,6 +232,12 @@
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
         
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
         .registration-section {
             display: flex;
             justify-content: center;
@@ -297,6 +303,17 @@
         
         .form-input::placeholder {
             color: var(--text-gray);
+        }
+        
+        .form-input.error {
+            border-color: #dc2626;
+        }
+        
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
         }
         
         .password-container {
@@ -539,6 +556,49 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification-error {
+            background: #dc2626;
+        }
+
+        .notification-warning {
+            background: #f59e0b;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-content i {
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -555,19 +615,19 @@
                 </div>
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="index.html">Главная</a></li>
-                        <li><a href="tanks.html">Танки</a></li>
-                        <li><a href="planes.html">Самолёты</a></li>
-                        <li><a href="ships.html">Корабли</a></li>
-                        <li><a href="artillery.html">Артиллерия</a></li>
-                        <li><a href="history.html">Исторические периоды</a></li>
+                        <li><a href="/index.html">Главная</a></li>
+                        <li><a href="/tanks.html">Танки</a></li>
+                        <li><a href="/planes.html">Самолёты</a></li>
+                        <li><a href="/ships.html">Корабли</a></li>
+                        <li><a href="/artillery.html">Артиллерия</a></li>
+                        <li><a href="/history.html">Исторические периоды</a></li>
                     </ul>
                 </nav>
                 <div class="nav-actions">
-                    <button class="icon-btn">
+                    <a href="/pages/bookmarks.html" class="icon-btn">
                         <i class="fas fa-bookmark"></i>
-                    </button>
-                    <a href="login.html" class="icon-btn">
+                    </a>
+                    <a href="/pages/login.html" class="icon-btn">
                         <i class="fas fa-sign-in-alt"></i>
                     </a>
                 </div>
@@ -586,43 +646,47 @@
                 <form id="registrationForm">
                     <div class="form-group">
                         <label class="form-label">Имя пользователя</label>
-                        <input type="text" class="form-input" placeholder="Введите имя пользователя">
+                        <input type="text" class="form-input" id="usernameInput" placeholder="Введите имя пользователя" required>
+                        <div class="error-message" id="usernameError"></div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Электронная почта</label>
-                        <input type="email" class="form-input" placeholder="Введите вашу почту">
+                        <input type="email" class="form-input" id="emailInput" placeholder="Введите вашу почту" required>
+                        <div class="error-message" id="emailError"></div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Пароль</label>
                         <div class="password-container">
-                            <input type="password" class="form-input" placeholder="Создайте пароль">
+                            <input type="password" class="form-input" id="passwordInput" placeholder="Создайте пароль" required>
                             <button type="button" class="password-toggle">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
+                        <div class="error-message" id="passwordError"></div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Подтвердите пароль</label>
                         <div class="password-container">
-                            <input type="password" class="form-input" placeholder="Повторите пароль">
+                            <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Повторите пароль" required>
                             <button type="button" class="password-toggle">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
+                        <div class="error-message" id="confirmPasswordError"></div>
                     </div>
                     
                     <div class="checkbox-group">
-                        <input type="checkbox" id="terms">
+                        <input type="checkbox" id="terms" required>
                         <label for="terms">
                             Я соглашаюсь с <a href="#">Условиями использования</a> и 
                             <a href="#">Политикой конфиденциальности</a>
                         </label>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-full">
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
                         <i class="fas fa-user-plus"></i> Зарегистрироваться
                     </button>
                 </form>
@@ -632,16 +696,16 @@
                 </div>
                 
                 <div class="social-login">
-                    <button class="social-btn">
+                    <button type="button" class="social-btn" id="googleBtn">
                         <i class="fab fa-google"></i> Google
                     </button>
-                    <button class="social-btn">
+                    <button type="button" class="social-btn" id="githubBtn">
                         <i class="fab fa-github"></i> GitHub
                     </button>
                 </div>
                 
                 <div class="login-link">
-                    Уже есть аккаунт? <a href="login.html">Войдите здесь</a>
+                    Уже есть аккаунт? <a href="/pages/login.html">Войдите здесь</a>
                 </div>
             </div>
         </div>
@@ -664,33 +728,33 @@
                 <div class="footer-links">
                     <h4>Коллекции</h4>
                     <ul>
-                        <li><a href="tanks.html">Танки и бронетехника</a></li>
-                        <li><a href="planes.html">Самолёты и вертолёты</a></li>
-                        <li><a href="ships.html">Боевые корабли и субмарины</a></li>
-                        <li><a href="artillery.html">Артиллерийские системы</a></li>
-                        <li><a href="prototypes.html">Прототипы и концепты</a></li>
+                        <li><a href="/tanks.html">Танки и бронетехника</a></li>
+                        <li><a href="/planes.html">Самолёты и вертолёты</a></li>
+                        <li><a href="/ships.html">Боевые корабли и субмарины</a></li>
+                        <li><a href="/artillery.html">Артиллерийские системы</a></li>
+                        <li><a href="/prototypes.html">Прототипы и концепты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="ww1.html">Первая мировая война</a></li>
-                        <li><a href="interwar.html">Межвоенный период</a></li>
-                        <li><a href="ww2.html">Вторая мировая война</a></li>
-                        <li><a href="coldwar.html">Эпоха холодной войны</a></li>
-                        <li><a href="modern.html">Современные конфликты</a></li>
+                        <li><a href="/history.html?period=ww1">Первая мировая война</a></li>
+                        <li><a href="/history.html?period=interwar">Межвоенный период</a></li>
+                        <li><a href="/history.html?period=ww2">Вторая мировая война</a></li>
+                        <li><a href="/history.html?period=coldwar">Эпоха холодной войны</a></li>
+                        <li><a href="/history.html?period=modern">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Ресурсы</h4>
                     <ul>
-                        <li><a href="museums.html">Военные музеи мира</a></li>
-                        <li><a href="specs.html">Технические характеристики</a></li>
-                        <li><a href="documents.html">Исторические документы</a></li>
-                        <li><a href="development.html">История разработки</a></li>
-                        <li><a href="archive.html">Архив данных</a></li>
+                        <li><a href="/museums.html">Военные музеи мира</a></li>
+                        <li><a href="/specs.html">Технические характеристики</a></li>
+                        <li><a href="/documents.html">Исторические документы</a></li>
+                        <li><a href="/development.html">История разработки</a></li>
+                        <li><a href="/archive.html">Архив данных</a></li>
                     </ul>
                 </div>
             </div>
@@ -702,76 +766,234 @@
         </div>
     </footer>
 
-    <script>
-        document.querySelectorAll('.password-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const icon = this.querySelector('i');
-                
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            });
-        });
-        
-        document.querySelectorAll('.social-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const provider = this.querySelector('i').className.includes('google') ? 'Google' : 'GitHub';
-                alert(`Вход через ${provider} будет реализован позже`);
-            });
-        });
-    </script>
-    <script type="module" src="/js/supabase.js"></script>
-    <script type="module" src="/js/auth.js"></script>
     <script type="module">
-        import { registerUser } from '/js/auth.js';
+        import { registerUser } from '/js/auth.js'
         
-        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const form = e.target;
-            const email = form.querySelector('input[type="email"]').value;
-            const password = form.querySelector('input[type="password"]').value;
-            const username = form.querySelector('input[type="text"]').value;
-            const terms = form.querySelector('input[type="checkbox"]').checked;
-
-            console.log('📧 Регистрируем:', email, username);
-
-            if (!email || !password || !username) {
-                alert('❌ Заполните все обязательные поля');
-                return;
+        class RegistrationManager {
+            constructor() {
+                this.init()
             }
 
-            if (!terms) {
-                alert('❌ Необходимо принять условия использования');
-                return;
+            init() {
+                this.setupEventListeners()
             }
 
-            if (password.length < 6) {
-                alert('❌ Пароль должен содержать минимум 6 символов');
-                return;
+            setupEventListeners() {
+                // Переключение видимости пароля
+                document.querySelectorAll('.password-toggle').forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const input = this.previousElementSibling
+                        const icon = this.querySelector('i')
+                        
+                        if (input.type === 'password') {
+                            input.type = 'text'
+                            icon.classList.remove('fa-eye')
+                            icon.classList.add('fa-eye-slash')
+                        } else {
+                            input.type = 'password'
+                            icon.classList.remove('fa-eye-slash')
+                            icon.classList.add('fa-eye')
+                        }
+                    })
+                })
+
+                // Социальные кнопки
+                document.getElementById('googleBtn').addEventListener('click', () => {
+                    this.showNotification('Регистрация через Google будет доступна позже', 'warning')
+                })
+
+                document.getElementById('githubBtn').addEventListener('click', () => {
+                    this.showNotification('Регистрация через GitHub будет доступна позже', 'warning')
+                })
+
+                // Форма регистрации
+                document.getElementById('registrationForm').addEventListener('submit', (e) => {
+                    this.handleRegistration(e)
+                })
+
+                // Валидация в реальном времени
+                document.getElementById('passwordInput').addEventListener('input', () => {
+                    this.validatePasswords()
+                })
+
+                document.getElementById('confirmPasswordInput').addEventListener('input', () => {
+                    this.validatePasswords()
+                })
             }
 
-            const result = await registerUser(email, password, username);
+            validateForm() {
+                const username = document.getElementById('usernameInput').value.trim()
+                const email = document.getElementById('emailInput').value.trim()
+                const password = document.getElementById('passwordInput').value
+                const confirmPassword = document.getElementById('confirmPasswordInput').value
+                const terms = document.getElementById('terms').checked
 
-            if (result.success) {
-                alert('✅ Регистрация успешна! Проверь email для подтверждения.');
-                console.log('👤 User:', result.user);
-                // Перенаправляем на страницу профиля
+                let isValid = true
+
+                // Очистка предыдущих ошибок
+                this.clearErrors()
+
+                // Валидация имени пользователя
+                if (!username) {
+                    this.showError('usernameError', 'Имя пользователя обязательно')
+                    isValid = false
+                } else if (username.length < 3) {
+                    this.showError('usernameError', 'Имя пользователя должно содержать минимум 3 символа')
+                    isValid = false
+                }
+
+                // Валидация email
+                if (!email) {
+                    this.showError('emailError', 'Email обязателен')
+                    isValid = false
+                } else if (!this.isValidEmail(email)) {
+                    this.showError('emailError', 'Введите корректный email')
+                    isValid = false
+                }
+
+                // Валидация пароля
+                if (!password) {
+                    this.showError('passwordError', 'Пароль обязателен')
+                    isValid = false
+                } else if (password.length < 6) {
+                    this.showError('passwordError', 'Пароль должен содержать минимум 6 символов')
+                    isValid = false
+                }
+
+                // Валидация подтверждения пароля
+                if (!confirmPassword) {
+                    this.showError('confirmPasswordError', 'Подтверждение пароля обязательно')
+                    isValid = false
+                } else if (password !== confirmPassword) {
+                    this.showError('confirmPasswordError', 'Пароли не совпадают')
+                    isValid = false
+                }
+
+                // Валидация согласия
+                if (!terms) {
+                    this.showNotification('Необходимо принять условия использования', 'warning')
+                    isValid = false
+                }
+
+                return isValid
+            }
+
+            validatePasswords() {
+                const password = document.getElementById('passwordInput').value
+                const confirmPassword = document.getElementById('confirmPasswordInput').value
+
+                if (confirmPassword && password !== confirmPassword) {
+                    this.showError('confirmPasswordError', 'Пароли не совпадают')
+                } else {
+                    this.hideError('confirmPasswordError')
+                }
+            }
+
+            async handleRegistration(e) {
+                e.preventDefault()
+
+                if (!this.validateForm()) {
+                    return
+                }
+
+                const username = document.getElementById('usernameInput').value.trim()
+                const email = document.getElementById('emailInput').value.trim()
+                const password = document.getElementById('passwordInput').value
+
+                // Показываем индикатор загрузки
+                const submitBtn = document.getElementById('submitBtn')
+                const originalText = submitBtn.innerHTML
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...'
+                submitBtn.disabled = true
+
+                try {
+                    const result = await registerUser(email, password, username)
+
+                    if (result.success) {
+                        this.showNotification(result.message, 'success')
+                        
+                        // Перенаправляем на страницу входа через 2 секунды
+                        setTimeout(() => {
+                            window.location.href = '/pages/login.html'
+                        }, 2000)
+                    } else {
+                        this.showNotification(result.error, 'error')
+                    }
+                } catch (error) {
+                    this.showNotification('Произошла непредвиденная ошибка', 'error')
+                    console.error('Registration error:', error)
+                } finally {
+                    submitBtn.innerHTML = originalText
+                    submitBtn.disabled = false
+                }
+            }
+
+            showError(elementId, message) {
+                const element = document.getElementById(elementId)
+                const input = document.getElementById(elementId.replace('Error', 'Input'))
+                
+                element.textContent = message
+                element.style.display = 'block'
+                input.classList.add('error')
+            }
+
+            hideError(elementId) {
+                const element = document.getElementById(elementId)
+                const input = document.getElementById(elementId.replace('Error', 'Input'))
+                
+                element.style.display = 'none'
+                input.classList.remove('error')
+            }
+
+            clearErrors() {
+                const errorElements = document.querySelectorAll('.error-message')
+                const inputElements = document.querySelectorAll('.form-input')
+                
+                errorElements.forEach(element => {
+                    element.style.display = 'none'
+                })
+                
+                inputElements.forEach(input => {
+                    input.classList.remove('error')
+                })
+            }
+
+            isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                return emailRegex.test(email)
+            }
+
+            showNotification(message, type = 'info') {
+                // Удаляем существующие уведомления
+                const existingNotifications = document.querySelectorAll('.notification')
+                existingNotifications.forEach(notification => notification.remove())
+
+                const notification = document.createElement('div')
+                notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'warning' ? 'notification-warning' : ''}`
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `
+
+                document.body.appendChild(notification)
+
                 setTimeout(() => {
-                    window.location.href = '/pages/profile.html';
-                }, 2000);
-            } else {
-                alert('❌ Ошибка: ' + result.error);
-                console.error('🚨 Error:', result.error);
+                    notification.style.animation = 'slideOut 0.3s ease'
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification)
+                        }
+                    }, 300)
+                }, 5000)
             }
-        });
+        }
+
+        // Инициализация когда DOM загружен
+        document.addEventListener('DOMContentLoaded', () => {
+            new RegistrationManager()
+        })
     </script>
 </body>
 </html>
