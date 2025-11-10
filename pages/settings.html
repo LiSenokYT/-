@@ -233,6 +233,12 @@
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         /* Стили для меню пользователя */
         .user-menu {
             position: relative;
@@ -493,6 +499,10 @@
             color: var(--text-gray);
         }
 
+        .form-input.error {
+            border-color: #dc2626;
+        }
+
         .form-textarea {
             min-height: 120px;
             resize: vertical;
@@ -503,6 +513,13 @@
             color: var(--text-gray);
             font-size: 0.85rem;
             margin-top: 0.5rem;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
         }
 
         /* Аватар */
@@ -1015,6 +1032,7 @@
                                 <div class="form-group">
                                     <label class="form-label">Имя пользователя *</label>
                                     <input type="text" class="form-input" id="usernameInput" placeholder="Введите имя пользователя">
+                                    <div class="error-message" id="usernameError"></div>
                                     <p class="form-help">Уникальное имя для вашего профиля. Можно использовать буквы, цифры и подчеркивания.</p>
                                 </div>
                                 
@@ -1093,17 +1111,20 @@
                         <div class="form-group">
                             <label class="form-label">Текущий пароль</label>
                             <input type="password" class="form-input" id="currentPasswordInput" placeholder="Введите текущий пароль">
+                            <div class="error-message" id="currentPasswordError"></div>
                         </div>
                         
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label">Новый пароль</label>
                                 <input type="password" class="form-input" id="newPasswordInput" placeholder="Введите новый пароль">
+                                <div class="error-message" id="newPasswordError"></div>
                             </div>
                             
                             <div class="form-group">
                                 <label class="form-label">Подтвердите пароль</label>
                                 <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Повторите новый пароль">
+                                <div class="error-message" id="confirmPasswordError"></div>
                             </div>
                         </div>
                         
@@ -1137,7 +1158,7 @@
                                 <div class="switch-description">Разрешить другим пользователям просматривать ваш профиль</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="publicProfileToggle" checked>
+                                <input type="checkbox" id="publicProfileToggle">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1159,7 +1180,7 @@
                                 <div class="switch-description">Разрешить другим пользователям отправлять вам сообщения</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="allowMessagesToggle" checked>
+                                <input type="checkbox" id="allowMessagesToggle">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1248,11 +1269,11 @@
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="/history.html">Первая мировая война</a></li>
-                        <li><a href="/history.html">Межвоенный период</a></li>
-                        <li><a href="/history.html">Вторая мировая война</a></li>
-                        <li><a href="/history.html">Эпоха холодной войны</a></li>
-                        <li><a href="/history.html">Современные конфликты</a></li>
+                        <li><a href="/history.html?period=ww1">Первая мировая война</a></li>
+                        <li><a href="/history.html?period=interwar">Межвоенный период</a></li>
+                        <li><a href="/history.html?period=ww2">Вторая мировая война</a></li>
+                        <li><a href="/history.html?period=coldwar">Эпоха холодной войны</a></li>
+                        <li><a href="/history.html?period=modern">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
@@ -1280,11 +1301,13 @@
     <script type="module" src="/js/navigation.js"></script>
     <script type="module">
         import { supabase } from '/js/supabase.js'
+        import { getCurrentUser, getUserProfile } from '/js/auth.js'
 
         class SettingsManager {
             constructor() {
                 this.currentUser = null
                 this.userProfile = null
+                this.originalData = {}
                 this.init()
             }
 
@@ -1296,10 +1319,10 @@
             }
 
             async checkAuth() {
-                const { data: { user }, error } = await supabase.auth.getUser()
+                const { user, error } = await getCurrentUser()
                 
                 if (error || !user) {
-                    window.location.href = '/login.html'
+                    window.location.href = '/pages/login.html'
                     return
                 }
                 
@@ -1308,11 +1331,7 @@
 
             async loadUserProfile() {
                 try {
-                    const { data: profile, error } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', this.currentUser.id)
-                        .single()
+                    const { profile, error } = await getUserProfile(this.currentUser.id)
 
                     if (error) throw error
 
@@ -1348,6 +1367,7 @@
                     document.getElementById('currentPasswordInput').value = ''
                     document.getElementById('newPasswordInput').value = ''
                     document.getElementById('confirmPasswordInput').value = ''
+                    this.clearErrors(['currentPasswordError', 'newPasswordError', 'confirmPasswordError'])
                 })
                 
                 // Приватность
@@ -1370,25 +1390,33 @@
             populateForm() {
                 if (!this.userProfile) return
 
+                // Сохраняем оригинальные данные для отмены
+                this.originalData = {
+                    username: this.userProfile.username || '',
+                    full_name: this.userProfile.full_name || '',
+                    website: this.userProfile.website || '',
+                    location: this.userProfile.location || '',
+                    bio: this.userProfile.bio || '',
+                    privacy_settings: this.userProfile.privacy_settings || {}
+                }
+
                 // Основная информация
-                document.getElementById('usernameInput').value = this.userProfile.username || ''
-                document.getElementById('fullNameInput').value = this.userProfile.full_name || ''
+                document.getElementById('usernameInput').value = this.originalData.username
+                document.getElementById('fullNameInput').value = this.originalData.full_name
                 document.getElementById('emailInput').value = this.currentUser.email || ''
-                document.getElementById('websiteInput').value = this.userProfile.website || ''
-                document.getElementById('locationInput').value = this.userProfile.location || ''
-                document.getElementById('bioInput').value = this.userProfile.bio || ''
+                document.getElementById('websiteInput').value = this.originalData.website
+                document.getElementById('locationInput').value = this.originalData.location
+                document.getElementById('bioInput').value = this.originalData.bio
                 
-                this.updateBioCounter(this.userProfile.bio || '')
+                this.updateBioCounter(this.originalData.bio)
                 this.updateAvatarPreview()
                 this.updateEmailStatus()
                 
                 // Приватность
-                if (this.userProfile.privacy_settings) {
-                    const privacy = this.userProfile.privacy_settings
-                    document.getElementById('publicProfileToggle').checked = privacy.profile_public !== false
-                    document.getElementById('showEmailToggle').checked = privacy.email_public === true
-                    document.getElementById('allowMessagesToggle').checked = privacy.allow_messages !== false
-                }
+                const privacy = this.originalData.privacy_settings
+                document.getElementById('publicProfileToggle').checked = privacy.profile_public !== false
+                document.getElementById('showEmailToggle').checked = privacy.email_public === true
+                document.getElementById('allowMessagesToggle').checked = privacy.allow_messages !== false
             }
 
             updateBioCounter(text) {
@@ -1438,11 +1466,38 @@
                 }
             }
 
+            validateProfileForm() {
+                const username = document.getElementById('usernameInput').value.trim()
+                const bio = document.getElementById('bioInput').value
+
+                let isValid = true
+                this.clearErrors(['usernameError'])
+
+                if (!username) {
+                    this.showError('usernameError', 'Имя пользователя обязательно')
+                    isValid = false
+                } else if (username.length < 3) {
+                    this.showError('usernameError', 'Имя пользователя должно содержать минимум 3 символа')
+                    isValid = false
+                }
+
+                if (bio.length > 500) {
+                    this.showNotification('Биография не должна превышать 500 символов', 'error')
+                    isValid = false
+                }
+
+                return isValid
+            }
+
             async saveProfile() {
                 const saveBtn = document.getElementById('saveProfileBtn')
                 const originalText = saveBtn.innerHTML
                 
                 try {
+                    if (!this.validateProfileForm()) {
+                        return
+                    }
+
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...'
                     saveBtn.disabled = true
 
@@ -1453,14 +1508,6 @@
                         location: document.getElementById('locationInput').value.trim(),
                         bio: document.getElementById('bioInput').value.trim(),
                         updated_at: new Date().toISOString()
-                    }
-
-                    if (!formData.username) {
-                        throw new Error('Имя пользователя обязательно')
-                    }
-
-                    if (formData.bio.length > 500) {
-                        throw new Error('Биография не должна превышать 500 символов')
                     }
 
                     const { data, error } = await supabase
@@ -1483,23 +1530,51 @@
                 }
             }
 
-            async changePassword() {
+            validatePasswordForm() {
                 const currentPassword = document.getElementById('currentPasswordInput').value
                 const newPassword = document.getElementById('newPasswordInput').value
                 const confirmPassword = document.getElementById('confirmPasswordInput').value
 
+                let isValid = true
+                this.clearErrors(['currentPasswordError', 'newPasswordError', 'confirmPasswordError'])
+
+                if (!currentPassword) {
+                    this.showError('currentPasswordError', 'Текущий пароль обязателен')
+                    isValid = false
+                }
+
+                if (!newPassword) {
+                    this.showError('newPasswordError', 'Новый пароль обязателен')
+                    isValid = false
+                } else if (newPassword.length < 6) {
+                    this.showError('newPasswordError', 'Пароль должен содержать минимум 6 символов')
+                    isValid = false
+                }
+
+                if (!confirmPassword) {
+                    this.showError('confirmPasswordError', 'Подтверждение пароля обязательно')
+                    isValid = false
+                } else if (newPassword !== confirmPassword) {
+                    this.showError('confirmPasswordError', 'Пароли не совпадают')
+                    isValid = false
+                }
+
+                return isValid
+            }
+
+            async changePassword() {
+                const changeBtn = document.getElementById('changePasswordBtn')
+                const originalText = changeBtn.innerHTML
+
                 try {
-                    if (!currentPassword || !newPassword || !confirmPassword) {
-                        throw new Error('Заполните все поля пароля')
+                    if (!this.validatePasswordForm()) {
+                        return
                     }
 
-                    if (newPassword !== confirmPassword) {
-                        throw new Error('Пароли не совпадают')
-                    }
+                    changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Смена пароля...'
+                    changeBtn.disabled = true
 
-                    if (newPassword.length < 8) {
-                        throw new Error('Пароль должен содержать минимум 8 символов')
-                    }
+                    const newPassword = document.getElementById('newPasswordInput').value
 
                     const { error } = await supabase.auth.updateUser({
                         password: newPassword
@@ -1516,11 +1591,20 @@
                 } catch (error) {
                     console.error('❌ Ошибка смены пароля:', error)
                     this.showNotification(error.message || 'Ошибка смены пароля', 'error')
+                } finally {
+                    changeBtn.innerHTML = originalText
+                    changeBtn.disabled = false
                 }
             }
 
             async savePrivacySettings() {
+                const saveBtn = document.getElementById('savePrivacyBtn')
+                const originalText = saveBtn.innerHTML
+
                 try {
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...'
+                    saveBtn.disabled = true
+
                     const privacySettings = {
                         profile_public: document.getElementById('publicProfileToggle').checked,
                         email_public: document.getElementById('showEmailToggle').checked,
@@ -1537,11 +1621,15 @@
 
                     if (error) throw error
 
+                    this.userProfile.privacy_settings = privacySettings
                     this.showNotification('Настройки приватности сохранены!', 'success')
                     
                 } catch (error) {
                     console.error('❌ Ошибка сохранения настроек приватности:', error)
                     this.showNotification('Ошибка сохранения настроек приватности', 'error')
+                } finally {
+                    saveBtn.innerHTML = originalText
+                    saveBtn.disabled = false
                 }
             }
 
@@ -1604,6 +1692,9 @@
                 avatarPreview.innerHTML = initials
                 avatarPreview.style.background = this.getAvatarColor(username)
                 
+                // Убираем URL аватара из профиля
+                this.userProfile.avatar_url = null
+                
                 this.showNotification('Аватар сгенерирован!', 'success')
             }
 
@@ -1612,7 +1703,14 @@
                     return
                 }
 
+                const confirmation = prompt('Введите "УДАЛИТЬ" для подтверждения удаления аккаунта:')
+                if (confirmation !== 'УДАЛИТЬ') {
+                    this.showNotification('Удаление аккаунта отменено', 'warning')
+                    return
+                }
+
                 try {
+                    // Удаляем профиль
                     const { error: profileError } = await supabase
                         .from('profiles')
                         .delete()
@@ -1620,6 +1718,7 @@
 
                     if (profileError) throw profileError
 
+                    // Выходим из системы
                     await supabase.auth.signOut()
                     
                     this.showNotification('Аккаунт успешно удален', 'success')
@@ -1659,6 +1758,25 @@
                     console.error('❌ Ошибка экспорта данных:', error)
                     this.showNotification('Ошибка экспорта данных', 'error')
                 }
+            }
+
+            showError(elementId, message) {
+                const element = document.getElementById(elementId)
+                const input = document.getElementById(elementId.replace('Error', 'Input') || elementId.replace('Error', ''))
+                
+                element.textContent = message
+                element.style.display = 'block'
+                if (input) input.classList.add('error')
+            }
+
+            clearErrors(elementIds) {
+                elementIds.forEach(id => {
+                    const element = document.getElementById(id)
+                    const input = document.getElementById(id.replace('Error', 'Input') || id.replace('Error', ''))
+                    
+                    if (element) element.style.display = 'none'
+                    if (input) input.classList.remove('error')
+                })
             }
 
             showNotification(message, type = 'info') {
