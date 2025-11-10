@@ -864,6 +864,19 @@
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -903,7 +916,7 @@
             <!-- Шапка профиля -->
             <div class="user-header">
                 <div class="user-avatar" id="userAvatar">
-                    <!-- Аватар будет загружен динамически -->
+                    <div class="skeleton" style="width: 100%; height: 100%; border-radius: 50%;"></div>
                 </div>
                 <div class="user-info">
                     <h1 class="user-name" id="userName">Загрузка...</h1>
@@ -960,9 +973,11 @@
                 
                 <div class="bookmarks-grid" id="bookmarksList">
                     <!-- Закладки будут загружены динамически -->
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="empty-state" id="bookmarksEmpty">
+                        <i class="fas fa-bookmark"></i>
+                        <h3>Пока нет закладок</h3>
+                        <p>Сохраняйте интересные экспонаты, чтобы вернуться к ним позже</p>
+                    </div>
                 </div>
             </div>
 
@@ -972,9 +987,11 @@
                 
                 <div class="activity-list" id="activityList">
                     <!-- Активность будет загружена динамически -->
-                    <div class="activity-item skeleton" style="height: 80px;"></div>
-                    <div class="activity-item skeleton" style="height: 80px;"></div>
-                    <div class="activity-item skeleton" style="height: 80px;"></div>
+                    <div class="empty-state" id="activityEmpty">
+                        <i class="fas fa-history"></i>
+                        <h3>Активность отсутствует</h3>
+                        <p>Ваши действия на сайте будут отображаться здесь</p>
+                    </div>
                 </div>
             </div>
 
@@ -984,10 +1001,34 @@
                 
                 <div class="stats-grid" id="statsGrid">
                     <!-- Статистика будет загружена динамически -->
-                    <div class="stat-card skeleton" style="height: 200px;"></div>
-                    <div class="stat-card skeleton" style="height: 200px;"></div>
-                    <div class="stat-card skeleton" style="height: 200px;"></div>
-                    <div class="stat-card skeleton" style="height: 200px;"></div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">Просмотров страниц</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Сохранённых закладок</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Оставленных комментариев</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-value" id="activeDays">0</div>
+                        <div class="stat-label">Дней активности</div>
+                    </div>
                 </div>
             </div>
 
@@ -997,9 +1038,11 @@
                 
                 <div class="bookmarks-grid" id="achievementsList">
                     <!-- Достижения будут загружены динамически -->
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
-                    <div class="bookmark-card skeleton" style="height: 300px;"></div>
+                    <div class="empty-state" id="achievementsEmpty">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Достижения отсутствуют</h3>
+                        <p>Продолжайте исследовать сайт, чтобы получить достижения</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1034,11 +1077,11 @@
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="/history.html">Первая мировая война</a></li>
-                        <li><a href="/history.html">Межвоенный период</a></li>
-                        <li><a href="/history.html">Вторая мировая война</a></li>
-                        <li><a href="/history.html">Эпоха холодной войны</a></li>
-                        <li><a href="/history.html">Современные конфликты</a></li>
+                        <li><a href="/history.html?period=ww1">Первая мировая война</a></li>
+                        <li><a href="/history.html?period=interwar">Межвоенный период</a></li>
+                        <li><a href="/history.html?period=ww2">Вторая мировая война</a></li>
+                        <li><a href="/history.html?period=coldwar">Эпоха холодной войны</a></li>
+                        <li><a href="/history.html?period=modern">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
@@ -1067,115 +1110,7 @@
     
     <script type="module">
         import { supabase } from '/js/supabase.js'
-
-        // Функция для гарантии существования профиля с обработкой RLS
-        async function ensureProfileExists(user) {
-            try {
-                console.log('🔄 Ensuring profile exists for user:', user.id);
-                
-                // Сначала проверяем существует ли профиль
-                const { data: profile, error: fetchError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-
-                if (fetchError && fetchError.code === 'PGRST116') { 
-                    // Profile not found - создаем новый профиль
-                    console.log('📝 Profile not found, creating new one...');
-                    
-                    const username = user.user_metadata?.username || user.email.split('@')[0];
-                    
-                    // Создаем профиль с использованием RLS-совместимого подхода
-                    const { data: newProfile, error: createError } = await supabase
-                        .from('profiles')
-                        .insert({
-                            id: user.id,
-                            username: username,
-                            email: user.email,
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString()
-                        })
-                        .select()
-                        .single();
-
-                    if (createError) {
-                        console.error('❌ Failed to create profile:', createError);
-                        
-                        // Если ошибка RLS, пробуем альтернативный метод
-                        if (createError.code === '42501' || createError.message.includes('row-level security')) {
-                            console.log('🛠 Trying alternative profile creation method...');
-                            return await createProfileAlternative(user);
-                        }
-                        throw createError;
-                    }
-                    
-                    console.log('✅ Profile created successfully:', newProfile);
-                    return { success: true, profile: newProfile };
-                    
-                } else if (fetchError) {
-                    console.error('❌ Error fetching profile:', fetchError);
-                    throw fetchError;
-                }
-                
-                console.log('✅ Profile already exists:', profile);
-                return { success: true, profile: profile };
-                
-            } catch (error) {
-                console.error('❌ Error ensuring profile exists:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Альтернативный метод создания профиля через auth функции
-        async function createProfileAlternative(user) {
-            try {
-                console.log('🔧 Using alternative profile creation method...');
-                
-                const username = user.user_metadata?.username || user.email.split('@')[0];
-                
-                // Обновляем метаданные пользователя через auth
-                const { error: updateError } = await supabase.auth.updateUser({
-                    data: { 
-                        username: username,
-                        profile_created: true 
-                    }
-                });
-
-                if (updateError) {
-                    console.error('❌ Failed to update user metadata:', updateError);
-                    throw updateError;
-                }
-
-                // Ждем немного и проверяем снова
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Пробуем создать профиль еще раз
-                const { data: profile, error: retryError } = await supabase
-                    .from('profiles')
-                    .insert({
-                        id: user.id,
-                        username: username,
-                        email: user.email,
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    })
-                    .select()
-                    .single();
-
-                if (retryError) {
-                    console.error('❌ Retry also failed:', retryError);
-                    throw retryError;
-                }
-
-                console.log('✅ Profile created via alternative method:', profile);
-                return { success: true, profile: profile };
-                
-            } catch (error) {
-                console.error('❌ Alternative method failed:', error);
-                throw error;
-            }
-        }
+        import { getCurrentUser, getUserProfile } from '/js/auth.js'
 
         class ProfileManager {
             constructor() {
@@ -1185,68 +1120,29 @@
             }
 
             async init() {
-                try {
-                    await this.checkAuth()
-                    await this.loadUserProfile()
-                    this.setupEventListeners()
-                    this.updateProfileUI()
-                } catch (error) {
-                    console.error('❌ Profile manager init error:', error)
-                    this.showNotification('Ошибка инициализации профиля', 'error')
-                }
+                await this.checkAuth()
+                await this.loadUserProfile()
+                this.setupEventListeners()
+                this.updateProfileUI()
+                this.loadUserData()
             }
 
             async checkAuth() {
-                const { data: { user }, error } = await supabase.auth.getUser()
+                const { user, error } = await getCurrentUser()
                 
                 if (error || !user) {
-                    console.log('🔐 No authenticated user, redirecting to login...')
-                    window.location.href = '/login.html'
+                    window.location.href = '/pages/login.html'
                     return
                 }
                 
                 this.currentUser = user
-                console.log('✅ User authenticated:', user.email)
-                
-                // Гарантируем что профиль существует
-                const profileResult = await ensureProfileExists(user)
-                if (!profileResult.success) {
-                    console.error('❌ Failed to ensure profile exists:', profileResult.error)
-                    this.showNotification('Проблема с созданием профиля', 'error')
-                } else {
-                    console.log('✅ Profile ensured:', profileResult.profile)
-                }
             }
 
             async loadUserProfile() {
                 try {
-                    if (!this.currentUser) {
-                        throw new Error('No authenticated user')
-                    }
+                    const { profile, error } = await getUserProfile(this.currentUser.id)
 
-                    console.log('👤 Loading profile for user:', this.currentUser.id)
-                    
-                    const { data: profile, error } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', this.currentUser.id)
-                        .single()
-
-                    if (error) {
-                        console.error('❌ Profile load error:', error)
-                        
-                        if (error.code === 'PGRST116') {
-                            // Profile not found - создаем его
-                            console.log('🔄 Profile not found during load, creating...')
-                            const createResult = await ensureProfileExists(this.currentUser)
-                            if (createResult.success) {
-                                this.userProfile = createResult.profile
-                                console.log('✅ Profile created and loaded:', this.userProfile)
-                                return
-                            }
-                        }
-                        throw error
-                    }
+                    if (error) throw error
 
                     this.userProfile = profile
                     console.log('✅ Профиль загружен:', profile)
@@ -1254,10 +1150,6 @@
                 } catch (error) {
                     console.error('❌ Ошибка загрузки профиля:', error)
                     this.showNotification('Ошибка загрузки профиля', 'error')
-                    
-                    // Показываем сообщение об ошибке
-                    document.getElementById('userName').textContent = 'Ошибка загрузки'
-                    document.getElementById('userBio').textContent = 'Не удалось загрузить данные профиля. Попробуйте обновить страницу.'
                 }
             }
 
@@ -1285,6 +1177,11 @@
                             card.style.transform = 'translateX(100px)';
                             setTimeout(() => {
                                 card.remove();
+                                // Проверяем, остались ли закладки
+                                const bookmarksGrid = document.getElementById('bookmarksList');
+                                if (bookmarksGrid.children.length === 1) { // Только empty-state остался
+                                    document.getElementById('bookmarksEmpty').style.display = 'block';
+                                }
                             }, 300);
                         }
                     }
@@ -1292,66 +1189,33 @@
             }
 
             updateProfileUI() {
-                if (!this.userProfile) {
-                    console.log('⚠️ No profile data available, using fallback');
-                    this.showFallbackUI();
-                    return;
-                }
-
-                console.log('🎨 Updating UI with profile:', this.userProfile);
+                if (!this.userProfile) return
 
                 // Основная информация
-                document.getElementById('userName').textContent = this.userProfile.username || this.currentUser.email;
-                document.getElementById('userRank').textContent = this.getUserRank();
-                document.getElementById('userBio').textContent = this.userProfile.bio || 'Пользователь не добавил информацию о себе.';
+                document.getElementById('userName').textContent = this.userProfile.username || this.currentUser.email
+                document.getElementById('userRank').textContent = this.getUserRank()
+                document.getElementById('userBio').textContent = this.userProfile.bio || 'Пользователь не добавил информацию о себе.'
                 
                 // Аватар
-                this.updateAvatarPreview();
+                this.updateAvatarPreview()
                 
                 // Мета-информация
-                this.updateUserMeta();
+                this.updateUserMeta()
                 
                 // Статистика
-                document.getElementById('statBookmarks').textContent = this.userProfile.bookmarks_count || '0';
-                document.getElementById('statViews').textContent = this.userProfile.views_count || '0';
-                document.getElementById('statComments').textContent = this.userProfile.comments_count || '0';
-                
-                const joinDate = this.userProfile.created_at || this.currentUser.created_at;
-                document.getElementById('statDays').textContent = Math.floor((new Date() - new Date(joinDate)) / (1000 * 60 * 60 * 24));
-                
-                // Загружаем демо-данные для вкладок
-                this.loadDemoData();
-            }
-
-            showFallbackUI() {
-                document.getElementById('userName').textContent = this.currentUser?.email || 'Пользователь';
-                document.getElementById('userRank').textContent = 'Новичок';
-                document.getElementById('userBio').textContent = 'Загрузка данных профиля...';
-                
-                // Показываем базовую информацию из auth
-                const metaContainer = document.getElementById('userMeta');
-                if (metaContainer && this.currentUser) {
-                    metaContainer.innerHTML = `
-                        <div class="meta-item">
-                            <i class="fas fa-calendar"></i>
-                            <span>Участник с ${new Date(this.currentUser.created_at).getFullYear()} года</span>
-                        </div>
-                    `;
-                }
-                
-                this.loadDemoData();
+                this.updateStats()
             }
 
             updateAvatarPreview() {
-                const avatarPreview = document.getElementById('userAvatar');
+                const avatarPreview = document.getElementById('userAvatar')
                 
                 if (this.userProfile.avatar_url) {
-                    avatarPreview.innerHTML = `<img src="${this.userProfile.avatar_url}" alt="Аватар" onerror="this.style.display='none'">`;
+                    avatarPreview.innerHTML = `<img src="${this.userProfile.avatar_url}" alt="Аватар" onerror="this.style.display='none'">`
                 } else {
-                    const username = this.userProfile.username || this.currentUser.email;
-                    const initials = username.substring(0, 2).toUpperCase();
-                    avatarPreview.innerHTML = initials;
-                    avatarPreview.style.background = this.getAvatarColor(username);
+                    const username = this.userProfile.username || this.currentUser.email
+                    const initials = username.substring(0, 2).toUpperCase()
+                    avatarPreview.innerHTML = initials
+                    avatarPreview.style.background = this.getAvatarColor(username)
                 }
             }
 
@@ -1363,32 +1227,30 @@
                     'linear-gradient(135deg, #8b5cf6, #a78bfa)',
                     'linear-gradient(135deg, #ef4444, #f87171)',
                     'linear-gradient(135deg, #f59e0b, #fbbf24)'
-                ];
+                ]
                 
-                let hash = 0;
+                let hash = 0
                 for (let i = 0; i < username.length; i++) {
-                    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+                    hash = username.charCodeAt(i) + ((hash << 5) - hash)
                 }
-                const index = Math.abs(hash) % colors.length;
-                return colors[index];
+                const index = Math.abs(hash) % colors.length
+                return colors[index]
             }
 
             getUserRank() {
-                if (!this.userProfile.created_at) return 'Новичок';
+                const joinDate = new Date(this.userProfile.created_at || this.currentUser.created_at)
+                const monthsSinceJoin = (new Date() - joinDate) / (1000 * 60 * 60 * 24 * 30)
                 
-                const joinDate = new Date(this.userProfile.created_at);
-                const monthsSinceJoin = (new Date() - joinDate) / (1000 * 60 * 60 * 24 * 30);
-                
-                if (monthsSinceJoin > 24) return 'Ветеран сообщества';
-                if (monthsSinceJoin > 12) return 'Опытный исследователь';
-                if (monthsSinceJoin > 6) return 'Активный участник';
-                if (monthsSinceJoin > 3) return 'Любитель техники';
-                return 'Новичок';
+                if (monthsSinceJoin > 24) return 'Ветеран сообщества'
+                if (monthsSinceJoin > 12) return 'Опытный исследователь'
+                if (monthsSinceJoin > 6) return 'Активный участник'
+                if (monthsSinceJoin > 3) return 'Любитель техники'
+                return 'Новичок'
             }
 
             updateUserMeta() {
-                const metaContainer = document.getElementById('userMeta');
-                const metaItems = [];
+                const metaContainer = document.getElementById('userMeta')
+                const metaItems = []
 
                 if (this.userProfile.full_name) {
                     metaItems.push(`
@@ -1396,7 +1258,7 @@
                             <i class="fas fa-user"></i>
                             <span>${this.userProfile.full_name}</span>
                         </div>
-                    `);
+                    `)
                 }
 
                 if (this.userProfile.location) {
@@ -1405,7 +1267,7 @@
                             <i class="fas fa-map-marker-alt"></i>
                             <span>${this.userProfile.location}</span>
                         </div>
-                    `);
+                    `)
                 }
 
                 if (this.userProfile.website) {
@@ -1416,209 +1278,268 @@
                                 ${this.userProfile.website.replace(/^https?:\/\//, '')}
                             </a>
                         </div>
-                    `);
+                    `)
                 }
 
-                const joinDate = this.userProfile.created_at || this.currentUser.created_at;
                 metaItems.push(`
                     <div class="meta-item">
                         <i class="fas fa-calendar"></i>
-                        <span>Участник с ${new Date(joinDate).getFullYear()} года</span>
+                        <span>Участник с ${new Date(this.currentUser.created_at).toLocaleDateString('ru-RU')}</span>
                     </div>
-                `);
+                `)
 
-                metaContainer.innerHTML = metaItems.join('');
+                metaContainer.innerHTML = metaItems.join('')
             }
 
-            loadDemoData() {
-                // Демо-данные для закладок
-                const bookmarksList = document.getElementById('bookmarksList');
-                if (bookmarksList) {
-                    bookmarksList.innerHTML = `
+            updateStats() {
+                const joinDate = new Date(this.currentUser.created_at)
+                const daysSinceJoin = Math.floor((new Date() - joinDate) / (1000 * 60 * 60 * 24))
+                
+                document.getElementById('statDays').textContent = daysSinceJoin
+                document.getElementById('activeDays').textContent = daysSinceJoin
+            }
+
+            async loadUserData() {
+                // Загрузка закладок
+                await this.loadBookmarks()
+                
+                // Загрузка активности
+                await this.loadActivity()
+                
+                // Загрузка достижений
+                await this.loadAchievements()
+            }
+
+            async loadBookmarks() {
+                try {
+                    // Здесь будет загрузка закладок из базы данных
+                    // Пока используем демо-данные
+                    const demoBookmarks = [
+                        {
+                            id: 1,
+                            title: "Т-34-85",
+                            type: "Танк",
+                            image: "/images/t34.jpg",
+                            description: "Советский средний танк периода Великой Отечественной войны",
+                            added: "2023-10-15"
+                        },
+                        {
+                            id: 2,
+                            title: "Ил-2",
+                            type: "Самолёт",
+                            image: "/images/il2.jpg",
+                            description: "Советский штурмовик времен Великой Отечественной войны",
+                            added: "2023-10-10"
+                        }
+                    ]
+
+                    const bookmarksList = document.getElementById('bookmarksList')
+                    
+                    if (demoBookmarks.length === 0) {
+                        document.getElementById('bookmarksEmpty').style.display = 'block'
+                        return
+                    }
+
+                    document.getElementById('bookmarksEmpty').style.display = 'none'
+                    
+                    bookmarksList.innerHTML = demoBookmarks.map(bookmark => `
                         <div class="bookmark-card">
                             <div class="bookmark-image">
-                                <img src="https://images.unsplash.com/photo-1546345501-c12f135fb1b0?q=80&w=1470" alt="Т-34">
-                                <div class="bookmark-type">Танк</div>
+                                <div style="width:100%;height:100%;background:linear-gradient(45deg, #2d3748, #4a5568);display:flex;align-items:center;justify-content:center;color:var(--text-gray);">
+                                    <i class="fas fa-image" style="font-size:2rem;"></i>
+                                </div>
+                                <div class="bookmark-type">${bookmark.type}</div>
                             </div>
                             <div class="bookmark-content">
-                                <h3>Т-34-85</h3>
+                                <h3>${bookmark.title}</h3>
+                                <p>${bookmark.description}</p>
                                 <div class="bookmark-meta">
-                                    <span class="meta-item"><i class="fas fa-flag"></i> СССР</span>
-                                    <span class="meta-item"><i class="fas fa-calendar"></i> 1943-1958</span>
+                                    <div class="meta-item">
+                                        <i class="fas fa-calendar"></i>
+                                        ${new Date(bookmark.added).toLocaleDateString('ru-RU')}
+                                    </div>
                                 </div>
-                                <p>Советский средний танк периода Великой Отечественной войны.</p>
                                 <div class="bookmark-actions">
-                                    <a href="/tanks.html" class="bookmark-btn">Открыть</a>
-                                    <button class="bookmark-btn remove-btn">Удалить</button>
+                                    <a href="/item.html?id=${bookmark.id}" class="bookmark-btn">
+                                        <i class="fas fa-eye"></i> Посмотреть
+                                    </a>
+                                    <button class="bookmark-btn remove-btn">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="bookmark-card">
-                            <div class="bookmark-image">
-                                <img src="https://images.unsplash.com/photo-1587735304152-2a4d91caf6e5?q=80&w=1470" alt="МиГ-29">
-                                <div class="bookmark-type">Самолёт</div>
-                            </div>
-                            <div class="bookmark-content">
-                                <h3>МиГ-29</h3>
-                                <div class="bookmark-meta">
-                                    <span class="meta-item"><i class="fas fa-flag"></i> СССР</span>
-                                    <span class="meta-item"><i class="fas fa-calendar"></i> 1982-н.в.</span>
-                                </div>
-                                <p>Советский многоцелевой истребитель четвертого поколения.</p>
-                                <div class="bookmark-actions">
-                                    <a href="/planes.html" class="bookmark-btn">Открыть</a>
-                                    <button class="bookmark-btn remove-btn">Удалить</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
+                    `).join('')
 
-                // Демо-данные для активности
-                const activityList = document.getElementById('activityList');
-                if (activityList) {
-                    activityList.innerHTML = `
+                } catch (error) {
+                    console.error('❌ Ошибка загрузки закладок:', error)
+                }
+            }
+
+            async loadActivity() {
+                try {
+                    // Демо-активность
+                    const demoActivity = [
+                        {
+                            id: 1,
+                            type: 'view',
+                            title: 'Просмотр страницы "Т-34-85"',
+                            time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+                        },
+                        {
+                            id: 2,
+                            type: 'bookmark',
+                            title: 'Добавлена закладка "Ил-2"',
+                            time: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
+                        },
+                        {
+                            id: 3,
+                            type: 'comment',
+                            title: 'Оставлен комментарий к "Т-34"',
+                            time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+                        }
+                    ]
+
+                    const activityList = document.getElementById('activityList')
+                    
+                    if (demoActivity.length === 0) {
+                        document.getElementById('activityEmpty').style.display = 'block'
+                        return
+                    }
+
+                    document.getElementById('activityEmpty').style.display = 'none'
+                    
+                    activityList.innerHTML = demoActivity.map(activity => `
                         <div class="activity-item">
                             <div class="activity-icon">
-                                <i class="fas fa-bookmark"></i>
+                                <i class="fas fa-${this.getActivityIcon(activity.type)}"></i>
                             </div>
                             <div class="activity-content">
-                                <div class="activity-title">Добавлена закладка: Т-34-85</div>
-                                <div class="activity-time">Сегодня, 14:30</div>
+                                <div class="activity-title">${activity.title}</div>
+                                <div class="activity-time">${this.formatTime(activity.time)}</div>
                             </div>
                         </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Просмотр страницы: История танкостроения</div>
-                                <div class="activity-time">Вчера, 18:45</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-comment"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Оставлен комментарий к статье "Битва за Берлин"</div>
-                                <div class="activity-time">2 дня назад</div>
-                            </div>
-                        </div>
-                    `;
+                    `).join('')
+
+                } catch (error) {
+                    console.error('❌ Ошибка загрузки активности:', error)
+                }
+            }
+
+            async loadAchievements() {
+                // Демо-достижения
+                const demoAchievements = [
+                    {
+                        id: 1,
+                        title: "Первый шаг",
+                        description: "Зарегистрировался на сайте",
+                        icon: "fa-user-plus",
+                        unlocked: true,
+                        date: this.currentUser.created_at
+                    },
+                    {
+                        id: 2,
+                        title: "Любознательный",
+                        description: "Просмотрел 10 различных экспонатов",
+                        icon: "fa-eye",
+                        unlocked: true,
+                        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        id: 3,
+                        title: "Коллекционер",
+                        description: "Сохранил 5 закладок",
+                        icon: "fa-bookmark",
+                        unlocked: false,
+                        date: null
+                    }
+                ]
+
+                const achievementsList = document.getElementById('achievementsList')
+                
+                if (demoAchievements.filter(a => a.unlocked).length === 0) {
+                    document.getElementById('achievementsEmpty').style.display = 'block'
+                    return
                 }
 
-                // Демо-данные для статистики
-                const statsGrid = document.getElementById('statsGrid');
-                if (statsGrid) {
-                    statsGrid.innerHTML = `
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-day"></i>
-                            </div>
-                            <h3>12</h3>
-                            <p>Дней активности в этом месяце</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <h3>47</h3>
-                            <p>Просмотренных страниц</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <h3>8.5</h3>
-                            <p>Часов проведено на сайте</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <h3>3</h3>
-                            <p>Полученных достижения</p>
-                        </div>
-                    `;
-                }
-
-                // Демо-данные для достижений
-                const achievementsList = document.getElementById('achievementsList');
-                if (achievementsList) {
-                    achievementsList.innerHTML = `
-                        <div class="bookmark-card">
-                            <div class="bookmark-image">
-                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?q=80&w=1470" alt="Первые шаги">
-                                <div class="bookmark-type">Достижение</div>
-                        </div>
-                        <div class="bookmark-content">
-                            <h3>Первые шаги</h3>
-                            <div class="bookmark-meta">
-                                <span class="meta-item"><i class="fas fa-trophy"></i> Бронза</span>
-                            </div>
-                            <p>Зарегистрируйтесь на сайте и создайте профиль</p>
-                            <div class="bookmark-actions">
-                                <span class="bookmark-btn" style="background: var(--accent-gold); color: var(--dark-base);">Получено</span>
-                            </div>
-                        </div>
-                    </div>
+                document.getElementById('achievementsEmpty').style.display = 'none'
+                
+                achievementsList.innerHTML = demoAchievements.filter(a => a.unlocked).map(achievement => `
                     <div class="bookmark-card">
-                        <div class="bookmark-image">
-                            <img src="https://images.unsplash.com/photo-1543946206-6c4ae2a5fc90?q=80&w=1470" alt="Любознательный">
-                            <div class="bookmark-type">Достижение</div>
-                        </div>
                         <div class="bookmark-content">
-                            <h3>Любознательный</h3>
+                            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                                <div class="activity-icon" style="background:${achievement.unlocked ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.1)'}">
+                                    <i class="fas ${achievement.icon}" style="color:${achievement.unlocked ? 'var(--accent-gold)' : 'var(--text-gray)'}"></i>
+                                </div>
+                                <div>
+                                    <h3 style="color:${achievement.unlocked ? 'var(--accent-gold)' : 'var(--text-gray)'};margin:0">${achievement.title}</h3>
+                                    <p style="margin:0;color:var(--text-gray)">${achievement.description}</p>
+                                </div>
+                            </div>
+                            ${achievement.date ? `
                             <div class="bookmark-meta">
-                                <span class="meta-item"><i class="fas fa-trophy"></i> Серебро</span>
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    ${new Date(achievement.date).toLocaleDateString('ru-RU')}
+                                </div>
                             </div>
-                            <p>Просмотрите 25 различных страниц с техникой</p>
-                            <div class="bookmark-actions">
-                                <span class="bookmark-btn" style="background: var(--accent-gold); color: var(--dark-base);">Получено</span>
-                            </div>
+                            ` : ''}
                         </div>
                     </div>
-                    `;
+                `).join('')
+            }
+
+            getActivityIcon(type) {
+                const icons = {
+                    'view': 'eye',
+                    'bookmark': 'bookmark',
+                    'comment': 'comment',
+                    'like': 'heart'
+                }
+                return icons[type] || 'info-circle'
+            }
+
+            formatTime(timeString) {
+                const time = new Date(timeString)
+                const now = new Date()
+                const diff = now - time
+                
+                if (diff < 60 * 60 * 1000) {
+                    return `${Math.floor(diff / (60 * 1000))} минут назад`
+                } else if (diff < 24 * 60 * 60 * 1000) {
+                    return `${Math.floor(diff / (60 * 60 * 1000))} часов назад`
+                } else {
+                    return time.toLocaleDateString('ru-RU')
                 }
             }
 
             showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'warning' ? 'notification-warning' : ''}`;
+                const notification = document.createElement('div')
+                notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'warning' ? 'notification-warning' : ''}`
                 notification.innerHTML = `
                     <div class="notification-content">
                         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
                         <span>${message}</span>
                     </div>
-                `;
+                `
 
-                document.body.appendChild(notification);
+                document.body.appendChild(notification)
 
                 setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease';
+                    notification.style.animation = 'slideOut 0.3s ease'
                     setTimeout(() => {
                         if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
+                            notification.parentNode.removeChild(notification)
                         }
-                    }, 300);
-                }, 5000);
+                    }, 300)
+                }, 5000)
             }
         }
 
         // Инициализация когда DOM загружен
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Initializing ProfileManager...');
-            new ProfileManager();
-        });
-
-        // Слушаем изменения авторизации
-        supabase.auth.onAuthStateChange((event, session) => {
-            console.log('🔐 Auth state changed:', event);
-            if (event === 'SIGNED_OUT') {
-                window.location.href = '/login.html';
-            }
-        });
+            new ProfileManager()
+        })
     </script>
 </body>
 </html>
