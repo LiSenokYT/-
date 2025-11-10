@@ -232,6 +232,12 @@
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
         
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
         .login-section {
             display: flex;
             justify-content: center;
@@ -297,6 +303,17 @@
         
         .form-input::placeholder {
             color: var(--text-gray);
+        }
+        
+        .form-input.error {
+            border-color: #dc2626;
+        }
+        
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
         }
         
         .password-container {
@@ -544,6 +561,49 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification-error {
+            background: #dc2626;
+        }
+
+        .notification-warning {
+            background: #f59e0b;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-content i {
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -560,19 +620,19 @@
                 </div>
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="index.html">Главная</a></li>
-                        <li><a href="tanks.html">Танки</a></li>
-                        <li><a href="planes.html">Самолёты</a></li>
-                        <li><a href="ships.html">Корабли</a></li>
-                        <li><a href="artillery.html">Артиллерия</a></li>
-                        <li><a href="history.html">Исторические периоды</a></li>
+                        <li><a href="/index.html">Главная</a></li>
+                        <li><a href="/tanks.html">Танки</a></li>
+                        <li><a href="/planes.html">Самолёты</a></li>
+                        <li><a href="/ships.html">Корабли</a></li>
+                        <li><a href="/artillery.html">Артиллерия</a></li>
+                        <li><a href="/history.html">Исторические периоды</a></li>
                     </ul>
                 </nav>
                 <div class="nav-actions">
-                    <button class="icon-btn">
+                    <a href="/pages/bookmarks.html" class="icon-btn">
                         <i class="fas fa-bookmark"></i>
-                    </button>
-                    <a href="registration.html" class="icon-btn">
+                    </a>
+                    <a href="/pages/registration.html" class="icon-btn">
                         <i class="fas fa-user-plus"></i>
                     </a>
                 </div>
@@ -590,29 +650,31 @@
                 
                 <form id="loginForm">
                     <div class="form-group">
-                        <label class="form-label">Электронная почта или имя пользователя</label>
-                        <input type="text" class="form-input" placeholder="Введите email или имя пользователя">
+                        <label class="form-label">Электронная почта</label>
+                        <input type="email" class="form-input" id="emailInput" placeholder="Введите ваш email" required>
+                        <div class="error-message" id="emailError"></div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Пароль</label>
                         <div class="password-container">
-                            <input type="password" class="form-input" placeholder="Введите ваш пароль">
+                            <input type="password" class="form-input" id="passwordInput" placeholder="Введите ваш пароль" required>
                             <button type="button" class="password-toggle">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
+                        <div class="error-message" id="passwordError"></div>
                     </div>
                     
                     <div class="remember-forgot">
                         <label class="remember-me">
-                            <input type="checkbox">
+                            <input type="checkbox" id="rememberMe">
                             Запомнить меня
                         </label>
-                        <a href="forgot-password.html" class="forgot-password">Забыли пароль?</a>
+                        <a href="/pages/forgot-password.html" class="forgot-password">Забыли пароль?</a>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-full">
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
                         <i class="fas fa-sign-in-alt"></i> Войти
                     </button>
                 </form>
@@ -622,16 +684,16 @@
                 </div>
                 
                 <div class="social-login">
-                    <button class="social-btn">
+                    <button type="button" class="social-btn" id="googleBtn">
                         <i class="fab fa-google"></i> Google
                     </button>
-                    <button class="social-btn">
+                    <button type="button" class="social-btn" id="githubBtn">
                         <i class="fab fa-github"></i> GitHub
                     </button>
                 </div>
                 
                 <div class="register-link">
-                    Нет аккаунта? <a href="registration.html">Зарегистрируйтесь здесь</a>
+                    Нет аккаунта? <a href="/pages/registration.html">Зарегистрируйтесь здесь</a>
                 </div>
             </div>
         </div>
@@ -654,33 +716,33 @@
                 <div class="footer-links">
                     <h4>Коллекции</h4>
                     <ul>
-                        <li><a href="tanks.html">Танки и бронетехника</a></li>
-                        <li><a href="planes.html">Самолёты и вертолёты</a></li>
-                        <li><a href="ships.html">Боевые корабли и субмарины</a></li>
-                        <li><a href="artillery.html">Артиллерийские системы</a></li>
-                        <li><a href="prototypes.html">Прототипы и концепты</a></li>
+                        <li><a href="/tanks.html">Танки и бронетехника</a></li>
+                        <li><a href="/planes.html">Самолёты и вертолёты</a></li>
+                        <li><a href="/ships.html">Боевые корабли и субмарины</a></li>
+                        <li><a href="/artillery.html">Артиллерийские системы</a></li>
+                        <li><a href="/prototypes.html">Прототипы и концепты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Исторические периоды</h4>
                     <ul>
-                        <li><a href="ww1.html">Первая мировая война</a></li>
-                        <li><a href="interwar.html">Межвоенный период</a></li>
-                        <li><a href="ww2.html">Вторая мировая война</a></li>
-                        <li><a href="coldwar.html">Эпоха холодной войны</a></li>
-                        <li><a href="modern.html">Современные конфликты</a></li>
+                        <li><a href="/history.html?period=ww1">Первая мировая война</a></li>
+                        <li><a href="/history.html?period=interwar">Межвоенный период</a></li>
+                        <li><a href="/history.html?period=ww2">Вторая мировая война</a></li>
+                        <li><a href="/history.html?period=coldwar">Эпоха холодной войны</a></li>
+                        <li><a href="/history.html?period=modern">Современные конфликты</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Ресурсы</h4>
                     <ul>
-                        <li><a href="museums.html">Военные музеи мира</a></li>
-                        <li><a href="specs.html">Технические характеристики</a></li>
-                        <li><a href="documents.html">Исторические документы</a></li>
-                        <li><a href="development.html">История разработки</a></li>
-                        <li><a href="archive.html">Архив данных</a></li>
+                        <li><a href="/museums.html">Военные музеи мира</a></li>
+                        <li><a href="/specs.html">Технические характеристики</a></li>
+                        <li><a href="/documents.html">Исторические документы</a></li>
+                        <li><a href="/development.html">История разработки</a></li>
+                        <li><a href="/archive.html">Архив данных</a></li>
                     </ul>
                 </div>
             </div>
@@ -692,95 +754,181 @@
         </div>
     </footer>
 
-    <script>
-        document.querySelectorAll('.password-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const icon = this.querySelector('i');
-                
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            });
-        });
-        
-        document.querySelectorAll('.social-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const provider = this.querySelector('i').className.includes('google') ? 'Google' : 'GitHub';
-                alert(`Вход через ${provider} будет реализован позже`);
-            });
-        });
-    </script>
     <script type="module">
-    import { loginUser } from '/js/auth.js';
+        import { loginUser } from '/js/auth.js'
+        
+        class LoginManager {
+            constructor() {
+                this.init()
+            }
 
-        // Находим форму по тегу form
-        const loginForm = document.querySelector('form');
+            init() {
+                this.setupEventListeners()
+            }
 
-        if (!loginForm) {
-            console.error('❌ Форма не найдена');
-        } else {
-        const form = e.target;
-            console.log('✅ Форма найдена:', loginForm);
+            setupEventListeners() {
+                // Переключение видимости пароля
+                document.querySelectorAll('.password-toggle').forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const input = this.previousElementSibling
+                        const icon = this.querySelector('i')
+                        
+                        if (input.type === 'password') {
+                            input.type = 'text'
+                            icon.classList.remove('fa-eye')
+                            icon.classList.add('fa-eye-slash')
+                        } else {
+                            input.type = 'password'
+                            icon.classList.remove('fa-eye-slash')
+                            icon.classList.add('fa-eye')
+                        }
+                    })
+                })
 
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+                // Социальные кнопки
+                document.getElementById('googleBtn').addEventListener('click', () => {
+                    this.showNotification('Вход через Google будет доступен позже', 'warning')
+                })
 
-                // Находим поля внутри формы
-                const emailInput = loginForm.querySelector('input[type="text"]');
-                const passwordInput = loginForm.querySelector('input[type="password"]');
+                document.getElementById('githubBtn').addEventListener('click', () => {
+                    this.showNotification('Вход через GitHub будет доступен позже', 'warning')
+                })
 
-                console.log('📧 Email input:', emailInput);
-                console('🔑 Password input:', passwordInput);
+                // Форма входа
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    this.handleLogin(e)
+                })
+            }
+
+            validateForm() {
+                const email = document.getElementById('emailInput').value.trim()
+                const password = document.getElementById('passwordInput').value
+
+                let isValid = true
+
+                // Очистка предыдущих ошибок
+                this.clearErrors()
+
+                // Валидация email
+                if (!email) {
+                    this.showError('emailError', 'Email обязателен')
+                    isValid = false
+                } else if (!this.isValidEmail(email)) {
+                    this.showError('emailError', 'Введите корректный email')
+                    isValid = false
+                }
+
+                // Валидация пароля
+                if (!password) {
+                    this.showError('passwordError', 'Пароль обязателен')
+                    isValid = false
+                }
+
+                return isValid
+            }
+
+            async handleLogin(e) {
+                e.preventDefault()
+
+                if (!this.validateForm()) {
+                    return
+                }
+
+                const email = document.getElementById('emailInput').value.trim()
+                const password = document.getElementById('passwordInput').value
+                const rememberMe = document.getElementById('rememberMe').checked
+
+                // Показываем индикатор загрузки
+                const submitBtn = document.getElementById('submitBtn')
+                const originalText = submitBtn.innerHTML
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...'
+                submitBtn.disabled = true
+
+                try {
+                    const result = await loginUser(email, password)
+
+                    if (result.success) {
+                        this.showNotification('Вход выполнен успешно!', 'success')
+                        
+                        // Сохраняем настройку "запомнить меня" в localStorage
+                        if (rememberMe) {
+                            localStorage.setItem('rememberMe', 'true')
+                        }
+                        
+                        // Перенаправляем на профиль через 1 секунду
+                        setTimeout(() => {
+                            window.location.href = '/pages/profile.html'
+                        }, 1000)
+                    } else {
+                        this.showNotification(result.error, 'error')
+                    }
+                } catch (error) {
+                    this.showNotification('Произошла непредвиденная ошибка', 'error')
+                    console.error('Login error:', error)
+                } finally {
+                    submitBtn.innerHTML = originalText
+                    submitBtn.disabled = false
+                }
+            }
+
+            showError(elementId, message) {
+                const element = document.getElementById(elementId)
+                const input = document.getElementById(elementId.replace('Error', 'Input'))
                 
-        if (!emailInput || !passwordInput) {
-            alert('❌ Не найдены поля формы');
-            return;
+                element.textContent = message
+                element.style.display = 'block'
+                input.classList.add('error')
+            }
+
+            clearErrors() {
+                const errorElements = document.querySelectorAll('.error-message')
+                const inputElements = document.querySelectorAll('.form-input')
+                
+                errorElements.forEach(element => {
+                    element.style.display = 'none'
+                })
+                
+                inputElements.forEach(input => {
+                    input.classList.remove('error')
+                })
+            }
+
+            isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                return emailRegex.test(email)
+            }
+
+            showNotification(message, type = 'info') {
+                // Удаляем существующие уведомления
+                const existingNotifications = document.querySelectorAll('.notification')
+                existingNotifications.forEach(notification => notification.remove())
+
+                const notification = document.createElement('div')
+                notification.className = `notification ${type === 'error' ? 'notification-error' : type === 'warning' ? 'notification-warning' : ''}`
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `
+
+                document.body.appendChild(notification)
+
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease'
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification)
+                        }
+                    }, 300)
+                }, 5000)
+            }
         }
 
-        const email = emailInput.value;
-        const password = passwordInput.value;
-
-        console.log('🔐 Attempting login:', email);
-
-        if (!email || !password) {
-            alert('❌ Заполните все поля');
-            return;
-        }
-
-        // Показываем загрузку
-        const submitBtn = loginForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
-        submitBtn.disabled = true;
-
-        try {
-            const result = await loginUser(email, password);
-
-        if (result.success) {
-            alert('✅ Вход выполнен!');
-            console.log('👤 User logged in:', result.user);
-            // Перенаправляем на профиль
-            window.location.href = '/pages/profile.html';
-        } else {
-            alert('❌ Ошибка входа: ' + result.error);
-            console.error('🚨 Login error:', result.error);
-        }
-    } catch (error) {
-        alert('❌ Неожиданная ошибка: ' + error.message);
-        console.error('🚨 Unexpected error:', error);
-    } finally {
-        // Восстанавливаем кнопку
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
- });
- </script>
+        // Инициализация когда DOM загружен
+        document.addEventListener('DOMContentLoaded', () => {
+            new LoginManager()
+        })
+    </script>
 </body>
 </html>
