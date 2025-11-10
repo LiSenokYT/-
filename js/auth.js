@@ -25,7 +25,12 @@ export async function registerUser(email, password, username) {
       throw new Error('Не удалось создать пользователя');
     }
 
+    // Ждем немного чтобы auth система обновилась
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // 2. Создаем профиль в таблице profiles
+    console.log('🔄 Creating profile in database...');
+    
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -41,23 +46,16 @@ export async function registerUser(email, password, username) {
     if (profileError) {
       console.error('❌ Profile creation error:', profileError);
       
-      // Если ошибка из-за дубликата, пробуем получить существующий профиль
-      if (profileError.code === '23505') { // unique violation
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authData.user.id)
-          .single();
-          
-        if (existingProfile) {
-          console.log('✅ Using existing profile:', existingProfile);
-          return { success: true, user: authData.user, profile: existingProfile };
-        }
+      // Если ошибка RLS, пробуем через функцию
+      if (profileError.code === '42501') {
+        console.log('🛠 Trying RPC function method...');
+        return await createProfileViaFunction(authData.user, username, email);
       }
+      
       throw profileError;
     }
 
-    console.log('✅ Profile created:', profileData);
+    console.log('✅ Profile created successfully:', profileData);
     return { success: true, user: authData.user, profile: profileData };
     
   } catch (error) {
@@ -66,7 +64,36 @@ export async function registerUser(email, password, username) {
   }
 }
 
-// Функция входа - ОБНОВЛЕННАЯ
+// Альтернативный метод через RPC функцию
+async function createProfileViaFunction(user, username, email) {
+  try {
+    // Создаем функцию в Supabase для обхода RLS
+    const { data, error } = await supabase.rpc('create_user_profile', {
+      user_id: user.id,
+      user_username: username,
+      user_email: email
+    });
+
+    if (error) throw error;
+
+    // Если функция успешно выполнилась, получаем профиль
+    const { data: profile, error: fetchError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    return { success: true, profile: profile };
+    
+  } catch (error) {
+    console.error('❌ RPC method failed:', error);
+    throw error;
+  }
+}
+
+// Функция входа
 export async function loginUser(email, password) {
   try {
     console.log('🔐 Attempting login...', { email });
@@ -97,7 +124,7 @@ export async function logoutUser() {
   if (error) console.error('Logout error:', error);
 }
 
-// Функция для создания профиля если его нет - ОБНОВЛЕННАЯ
+// Функция для создания профиля если его нет
 export async function ensureProfileExists(user) {
   try {
     // Сначала проверяем существует ли профиль
@@ -107,7 +134,8 @@ export async function ensureProfileExists(user) {
       .eq('id', user.id)
       .single();
 
-    if (fetchError && fetchError.code === 'PGRST116') { // Profile not found
+    if (fetchError && fetchError.code === 'PGRST116') { 
+      // Profile not found - создаем новый профиль
       console.log('🔄 Profile not found, creating...');
       
       const username = user.user_metadata?.username || user.email.split('@')[0];
@@ -131,6 +159,7 @@ export async function ensureProfileExists(user) {
       
       console.log('✅ Profile created:', newProfile);
       return { success: true, profile: newProfile };
+      
     } else if (fetchError) {
       throw fetchError;
     }
@@ -142,11 +171,4 @@ export async function ensureProfileExists(user) {
     console.error('❌ Error ensuring profile exists:', error);
     return { success: false, error: error.message };
   }
-}
-
-// Проверка авторизации
-export async function checkAuth() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) throw error;
-  return user;
 }
