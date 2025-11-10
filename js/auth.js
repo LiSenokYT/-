@@ -1,4 +1,4 @@
-// auth.js
+// auth.js - ОБНОВЛЕННАЯ ВЕРСИЯ
 import { supabase } from './supabase.js'
 
 // Функция регистрации
@@ -6,62 +6,59 @@ export async function registerUser(email, password, username) {
   try {
     console.log('🔧 Starting registration...', { email, username });
     
-    const { data, error } = await supabase.auth.signUp({
+    // 1. Регистрируем пользователя в Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
-      password: password
-    });
-    
-    if (error) throw error;
-
-    console.log('✅ User registered:', data.user);
-
-    // Создание профиля с повторными попытками
-    let profileCreated = false;
-    let attempts = 0;
-    const maxAttempts = 3;
-
-    while (!profileCreated && attempts < maxAttempts) {
-      try {
-        console.log(`🎯 Creating profile attempt ${attempts + 1} for user:`, data.user.id);
-        
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            username: username,
-            email: email,
-            created_at: new Date().toISOString()
-          })
-          .select();
-
-        if (profileError) {
-          console.error(`❌ Profile creation attempt ${attempts + 1} failed:`, profileError);
-          attempts++;
-          
-          // Ждем перед повторной попыткой
-          if (attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
-          continue;
-        }
-
-        console.log('✅ Profile created:', profileData);
-        profileCreated = true;
-        return { success: true, user: data.user, profile: profileData };
-        
-      } catch (profileError) {
-        console.error(`❌ Profile creation attempt ${attempts + 1} error:`, profileError);
-        attempts++;
-        
-        if (attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+      password: password,
+      options: {
+        data: {
+          username: username
         }
       }
+    });
+    
+    if (authError) throw authError;
+
+    console.log('✅ User registered in Auth:', authData.user);
+
+    if (!authData.user) {
+      throw new Error('Не удалось создать пользователя');
     }
 
-    if (!profileCreated) {
-      throw new Error('Не удалось создать профиль после нескольких попыток');
+    // 2. Создаем профиль в таблице profiles
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: authData.user.id,
+        username: username,
+        email: email,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (profileError) {
+      console.error('❌ Profile creation error:', profileError);
+      
+      // Если ошибка из-за дубликата, пробуем получить существующий профиль
+      if (profileError.code === '23505') { // unique violation
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authData.user.id)
+          .single();
+          
+        if (existingProfile) {
+          console.log('✅ Using existing profile:', existingProfile);
+          return { success: true, user: authData.user, profile: existingProfile };
+        }
+      }
+      throw profileError;
     }
+
+    console.log('✅ Profile created:', profileData);
+    return { success: true, user: authData.user, profile: profileData };
     
   } catch (error) {
     console.error('🚨 Registration error:', error);
@@ -69,7 +66,7 @@ export async function registerUser(email, password, username) {
   }
 }
 
-// Функция входа
+// Функция входа - ОБНОВЛЕННАЯ
 export async function loginUser(email, password) {
   try {
     console.log('🔐 Attempting login...', { email });
@@ -83,33 +80,9 @@ export async function loginUser(email, password) {
 
     console.log('✅ Login successful:', data.user);
     
-    // Проверяем существует ли профиль
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', data.user.id)
-      .single();
-
-    if (profileError) {
-      console.warn('⚠️ Profile not found, creating one...');
-      
-      // Создаем профиль если его нет
-      const { error: createError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          username: data.user.email.split('@')[0],
-          email: data.user.email,
-          created_at: new Date().toISOString()
-        });
-
-      if (createError) {
-        console.error('❌ Failed to create profile on login:', createError);
-      } else {
-        console.log('✅ Profile created on login');
-      }
-    }
-
+    // Гарантируем что профиль существует
+    await ensureProfileExists(data.user);
+    
     return { success: true, user: data.user };
 
   } catch (error) {
@@ -124,37 +97,56 @@ export async function logoutUser() {
   if (error) console.error('Logout error:', error);
 }
 
-// Функция для создания профиля если его нет
+// Функция для создания профиля если его нет - ОБНОВЛЕННАЯ
 export async function ensureProfileExists(user) {
   try {
-    const { data: profile, error } = await supabase
+    // Сначала проверяем существует ли профиль
+    const { data: profile, error: fetchError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
 
-    if (error || !profile) {
-      console.log('🔄 Creating missing profile for user:', user.id);
+    if (fetchError && fetchError.code === 'PGRST116') { // Profile not found
+      console.log('🔄 Profile not found, creating...');
       
-      const { error: createError } = await supabase
+      const username = user.user_metadata?.username || user.email.split('@')[0];
+      
+      const { data: newProfile, error: createError } = await supabase
         .from('profiles')
         .insert({
           id: user.id,
-          username: user.email.split('@')[0],
+          username: username,
           email: user.email,
-          created_at: new Date().toISOString()
-        });
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
       if (createError) {
+        console.error('❌ Failed to create profile:', createError);
         throw createError;
       }
       
-      console.log('✅ Missing profile created');
+      console.log('✅ Profile created:', newProfile);
+      return { success: true, profile: newProfile };
+    } else if (fetchError) {
+      throw fetchError;
     }
     
-    return { success: true };
+    console.log('✅ Profile exists:', profile);
+    return { success: true, profile: profile };
+    
   } catch (error) {
     console.error('❌ Error ensuring profile exists:', error);
     return { success: false, error: error.message };
   }
+}
+
+// Проверка авторизации
+export async function checkAuth() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return user;
 }
