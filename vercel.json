@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/index",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/tanks",
+      "dest": "/tanks.html"
+    },
+    {
+      "src": "/planes", 
+      "dest": "/planes.html"
+    },
+    {
+      "src": "/ships",
+      "dest": "/ships.html"
+    },
+    {
+      "src": "/artillery",
+      "dest": "/artillery.html"
+    },
+    {
+      "src": "/history",
+      "dest": "/history.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/pages/login.html"
+    },
+    {
+      "src": "/registration", 
+      "dest": "/pages/registration.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/pages/profile.html"
+    },
+    {
+      "src": "/settings",
+      "dest": "/pages/settings.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/404.html"
+    }
+  ]
+}
