@@ -1,59 +1,82 @@
-import { supabase } from './supabase.js'
+import { supabase } from '/js/supabase.js'
+import { getCurrentUser, getUserProfile, logoutUser } from '/js/auth.js'
 
-export async function updateNavigation() {
-  const { data: { user } } = await supabase.auth.getUser()
-  const navActions = document.querySelector('.nav-actions')
-  
-  if (!navActions) return
+class NavigationManager {
+    constructor() {
+        this.init()
+    }
 
-  // Очищаем навигацию
-  navActions.innerHTML = ''
+    async init() {
+        await this.updateNavigation()
+        this.setupEventListeners()
+    }
 
-  if (user) {
-    // ПОЛЬЗОВАТЕЛЬ ВОШЕЛ
-    const userMenu = document.createElement('div')
-    userMenu.className = 'user-menu'
-    userMenu.innerHTML = `
-      <div class="user-info">
-        <span class="user-name">${user.email}</span>
-        <div class="user-dropdown">
-          <a href="/pages/profile.html" class="dropdown-item">
-            <i class="fas fa-user"></i> Мой профиль
-          </a>
-          <a href="/pages/settings.html" class="dropdown-item">
-            <i class="fas fa-cog"></i> Настройки
-          </a>
-          <button class="dropdown-item logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Выйти
-          </button>
-        </div>
-      </div>
-    `
-    navActions.appendChild(userMenu)
+    async updateNavigation() {
+        const navActions = document.querySelector('.nav-actions')
+        if (!navActions) return
 
-    // Обработчик выхода
-    userMenu.querySelector('.logout-btn').addEventListener('click', async () => {
-      await supabase.auth.signOut()
-      window.location.reload()
-    })
+        const { user } = await getCurrentUser()
+        
+        if (user) {
+            // Пользователь авторизован
+            const { profile } = await getUserProfile(user.id)
+            
+            navActions.innerHTML = `
+                <a href="/pages/bookmarks.html" class="icon-btn" title="Закладки">
+                    <i class="fas fa-bookmark"></i>
+                </a>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <span class="user-display-name">${profile?.username || user.email}</span>
+                        <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 0.8rem;"></i>
+                        <div class="user-dropdown">
+                            <a href="/pages/profile.html" class="dropdown-item">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            <a href="/pages/settings.html" class="dropdown-item">
+                                <i class="fas fa-cog"></i> Настройки
+                            </a>
+                            <button class="dropdown-item logout-btn" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `
+        } else {
+            // Пользователь не авторизован
+            navActions.innerHTML = `
+                <a href="/pages/bookmarks.html" class="icon-btn" title="Закладки">
+                    <i class="fas fa-bookmark"></i>
+                </a>
+                <a href="/pages/login.html" class="icon-btn" title="Войти">
+                    <i class="fas fa-sign-in-alt"></i>
+                </a>
+                <a href="/pages/registration.html" class="btn btn-primary">
+                    Регистрация
+                </a>
+            `
+        }
+    }
 
-  } else {
-    // ПОЛЬЗОВАТЕЛЬ НЕ ВОШЕЛ
-    navActions.innerHTML = `
-      <a href="login.html" class="icon-btn">
-        <i class="fas fa-sign-in-alt"></i>
-      </a>
-      <a href="registration.html" class="icon-btn">
-        <i class="fas fa-user-plus"></i>
-      </a>
-    `
-  }
+    setupEventListeners() {
+        // Обработчик выхода
+        document.addEventListener('click', async (e) => {
+            if (e.target.id === 'logoutBtn' || e.target.closest('#logoutBtn')) {
+                e.preventDefault()
+                
+                const result = await logoutUser()
+                if (result.success) {
+                    window.location.href = '/index.html'
+                } else {
+                    alert('Ошибка при выходе: ' + result.error)
+                }
+            }
+        })
+    }
 }
 
-// Обновляем навигацию при загрузке страницы
-updateNavigation()
-
-// Слушаем изменения авторизации
-supabase.auth.onAuthStateChange((event, session) => {
-  updateNavigation()
+// Инициализация когда DOM загружен
+document.addEventListener('DOMContentLoaded', () => {
+    new NavigationManager()
 })
