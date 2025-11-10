@@ -51,9 +51,6 @@ export async function registerUser(email, password, username) {
 
         if (profileError) {
             console.error('❌ Ошибка создания профиля:', profileError)
-            
-            // Если не удалось создать профиль, удаляем пользователя из auth
-            await supabase.auth.admin.deleteUser(authData.user.id)
             throw new Error('Ошибка создания профиля: ' + profileError.message)
         }
 
