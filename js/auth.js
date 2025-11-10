@@ -1,5 +1,3 @@
-import { supabase } from '/js/supabase.js'
-
 // Регистрация пользователя
 export async function registerUser(email, password, username) {
     try {
@@ -43,7 +41,7 @@ export async function registerUser(email, password, username) {
                 {
                     id: authData.user.id,
                     username: username,
-                    email: email,
+                    email: email, // ← ДОБАВЛЕНО!
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 }
@@ -51,6 +49,14 @@ export async function registerUser(email, password, username) {
 
         if (profileError) {
             console.error('❌ Ошибка создания профиля:', profileError)
+            
+            // Если не удалось создать профиль, пытаемся удалить пользователя из auth
+            try {
+                await supabase.auth.signOut()
+            } catch (deleteError) {
+                console.error('Не удалось очистить сессию:', deleteError)
+            }
+            
             throw new Error('Ошибка создания профиля: ' + profileError.message)
         }
 
@@ -68,85 +74,5 @@ export async function registerUser(email, password, username) {
             success: false,
             error: error.message
         }
-    }
-}
-
-// Вход пользователя
-export async function loginUser(email, password) {
-    try {
-        console.log('🔄 Пытаемся войти...')
-        
-        if (!email || !password) {
-            throw new Error('Email и пароль обязательны')
-        }
-
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        })
-
-        if (error) {
-            console.error('❌ Ошибка входа:', error)
-            throw new Error(error.message)
-        }
-
-        if (!data.user) {
-            throw new Error('Пользователь не найден')
-        }
-
-        console.log('✅ Успешный вход:', data.user.id)
-        
-        return {
-            success: true,
-            user: data.user
-        }
-
-    } catch (error) {
-        console.error('🚨 Ошибка входа:', error)
-        return {
-            success: false,
-            error: error.message
-        }
-    }
-}
-
-// Выход пользователя
-export async function logoutUser() {
-    try {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
-        
-        return { success: true }
-    } catch (error) {
-        console.error('❌ Ошибка выхода:', error)
-        return { success: false, error: error.message }
-    }
-}
-
-// Проверка текущего пользователя
-export async function getCurrentUser() {
-    try {
-        const { data: { user }, error } = await supabase.auth.getUser()
-        
-        if (error) throw error
-        return { user, error: null }
-    } catch (error) {
-        return { user: null, error }
-    }
-}
-
-// Получение профиля пользователя
-export async function getUserProfile(userId) {
-    try {
-        const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single()
-
-        if (error) throw error
-        return { profile, error: null }
-    } catch (error) {
-        return { profile: null, error }
     }
 }
